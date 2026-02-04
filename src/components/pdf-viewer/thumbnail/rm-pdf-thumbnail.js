@@ -64,6 +64,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
   }
 
   handleClick() {
+    this.context?.setShouldScroll(true)
     this.context?.setCurrentPage(this.pageNumber)
   }
 

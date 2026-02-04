@@ -20,7 +20,8 @@ export default class PDFViewer extends LitElement {
       currentPage: { type: Number, state: true },
       totalPages: { type: Number, state: true },
       scale: { type: Number, state: true },
-      sidebarCollapsed: { type: Boolean, state: true }
+      sidebarCollapsed: { type: Boolean, state: true },
+      shouldScroll: { type: Boolean, state: true }
     }
   }
 
@@ -38,6 +39,7 @@ export default class PDFViewer extends LitElement {
     this.totalPages = 0
     this.scale = 1.5
     this.sidebarCollapsed = false
+    this.shouldScroll = false
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -52,19 +54,25 @@ export default class PDFViewer extends LitElement {
       totalPages: this.totalPages,
       scale: this.scale,
       sidebarCollapsed: this.sidebarCollapsed,
+      shouldScroll: this.shouldScroll,
       setCurrentPage: (page) => {
         this.currentPage = page
       },
       setScale: (scale) => {
         this.scale = scale
       },
+      setShouldScroll: (shouldScroll) => {
+        this.shouldScroll = shouldScroll
+      },
       nextPage: () => {
         if (this.currentPage < this.totalPages) {
+          this.shouldScroll = true
           this.currentPage++
         }
       },
       previousPage: () => {
         if (this.currentPage > 1) {
+          this.shouldScroll = true
           this.currentPage--
         }
       },

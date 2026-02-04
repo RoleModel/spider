@@ -25,7 +25,7 @@ export default class PDFCanvas extends PDFViewerComponent {
       await this.loadPages()
     }
 
-    if (this.context?.currentPage !== this._contextCurrentPage) {
+    if (this.context?.shouldScroll) {
       this.scrollToPage(this.context.currentPage)
     }
   }
@@ -48,7 +48,6 @@ export default class PDFCanvas extends PDFViewerComponent {
     this.pages = pages
   }
 
-
   scrollToPage(pageNum) {
     const container = this.shadowRoot.querySelector('.canvas-container')
     const pageElements = this.shadowRoot.querySelectorAll('rm-pdf-page')
@@ -65,6 +64,8 @@ export default class PDFCanvas extends PDFViewerComponent {
         top: offset,
         behavior: 'smooth'
       })
+
+      this.context?.setShouldScroll(false)
     }
   }
 
@@ -92,6 +93,7 @@ export default class PDFCanvas extends PDFViewerComponent {
       }
 
       if (currentPage !== this.context.currentPage) {
+        this._contextCurrentPage = currentPage
         this.context.setCurrentPage(currentPage)
       }
     }, 150)

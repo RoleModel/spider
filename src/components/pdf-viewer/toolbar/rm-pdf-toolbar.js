@@ -69,19 +69,19 @@ export default class PDFToolbar extends PDFViewerComponent {
             <img src=${openSidebarIcon} alt="Toggle sidebar" class="icon-open" />
             <img src=${closeSidebarIcon} alt="Toggle sidebar" class="icon-close" />
           </button>
-          
+
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
               <img src=${arrowLeftIcon} alt="Previous" />
             </button>
             <span class="page-info">
-              <input 
-                type="number" 
-                class="page-input" 
+              <input
+                type="number"
+                class="page-input"
                 .value="${currentPage}"
                 @change="${this.handlePageInput}"
                 @keydown="${this.handlePageKeydown}"
-                min="1" 
+                min="1"
                 max="${totalPages}"
               /> of ${totalPages}
             </span>
@@ -89,7 +89,7 @@ export default class PDFToolbar extends PDFViewerComponent {
               <img src=${arrowRightIcon} alt="Next" />
             </button>
           </div>
-          
+
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.zoomOut}" ?disabled="${scale <= 0.5}">
               <img src=${zoomOutIcon} alt="Zoom out" />
@@ -109,7 +109,7 @@ export default class PDFToolbar extends PDFViewerComponent {
             </button>
           </div>
         </div>
-        
+
         <button class="btn--icon" @click="">
           <img src=${closeIcon} alt="Close" />
         </button>
