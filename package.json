@@ -1,4 +1,41 @@
 {
   "name": "spider",
-  "packageManager": "yarn@4.11.0"
+  "description": "Shared high level web components for RoleModel Software and beyond",
+  "packageManager": "yarn@4.12.0",
+  "version": "0.0.1",
+  "author": "RoleModel Software",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./dist/components/*": "./dist/components/*",
+    "./dist/assets/*": "./dist/assets/*"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "web components",
+    "custom elements",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoleModel/spider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RoleModel/spider/issues"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && rsync -a src/assets dist/"
+  },
+  "dependencies": {
+    "lit": "^3.3.2"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
 }
