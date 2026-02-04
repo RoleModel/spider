@@ -4,6 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './rm-pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
+import { updateThemeColors } from './theme-config.js'
 import './toolbar/rm-pdf-toolbar.js'
 import './sidebar/rm-pdf-sidebar.js'
 import './canvas/rm-pdf-canvas.js'
@@ -188,26 +189,7 @@ export default class PDFViewer extends LitElement {
   }
 
   _updateThemeColors() {
-    const h = this.themeHue
-    const s = this.themeSaturation
-
-    this.style.setProperty('--theme-primary', `hsl(${h}, ${s}%, 50%)`)
-    this.style.setProperty('--theme-primary-light', `hsl(${h}, ${s}%, 90%)`)
-    this.style.setProperty('--theme-primary-lighter', `hsl(${h}, ${s}%, 95%)`)
-    this.style.setProperty('--theme-primary-dark', `hsl(${h}, ${s}%, 40%)`)
-    this.style.setProperty('--theme-primary-darker', `hsl(${h}, ${s}%, 30%)`)
-    this.style.setProperty('--theme-primary-transparent', `hsla(${h}, ${s}%, 50%, 70%)`)
-
-    this.style.setProperty('--theme-neutral-50', 'hsl(0, 0%, 98%)')
-    this.style.setProperty('--theme-neutral-100', 'hsl(0, 0%, 95%)')
-    this.style.setProperty('--theme-neutral-200', 'hsl(0, 0%, 87%)')
-    this.style.setProperty('--theme-neutral-300', 'hsl(0, 0%, 80%)')
-    this.style.setProperty('--theme-neutral-400', 'hsl(0, 0%, 63%)')
-    this.style.setProperty('--theme-neutral-500', 'hsl(0, 0%, 37%)')
-    this.style.setProperty('--theme-neutral-600', 'hsl(0, 0%, 20%)')
-
-    this.style.setProperty('--theme-border', 'hsl(0, 0%, 87%)')
-    this.style.setProperty('--theme-shadow', 'rgba(0, 0, 0, 0.1)')
+    updateThemeColors(this, this.themeHue, this.themeSaturation)
   }
 
   async firstUpdated() {

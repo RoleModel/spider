@@ -7,12 +7,12 @@ export default css`
 
   .page-wrapper {
     position: relative;
-    margin-bottom: 16px;
+    margin-bottom: var(--theme-spacing-md, 1rem);
   }
 
   canvas {
     display: block;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 var(--theme-spacing-xs, 0.25rem) var(--theme-spacing-sm, 0.5rem) var(--theme-shadow, rgba(0, 0, 0, 0.1));
   }
 
   .text-layer {

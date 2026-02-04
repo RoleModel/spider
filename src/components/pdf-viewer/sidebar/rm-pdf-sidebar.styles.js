@@ -8,7 +8,7 @@ export default css`
   .sidebar {
     width: 200px;
     background: var(--theme-neutral-50, #fafafa);
-    border-right: 1px solid var(--theme-border, #ddd);
+    border-right: var(--theme-border-width-sm, 1px) solid var(--theme-border, #ddd);
     overflow: hidden;
     height: 100%;
     position: relative;
@@ -20,10 +20,10 @@ export default css`
   }
 
   .thumbnails-container {
-    padding: 1rem;
+    padding: var(--theme-spacing-md, 1rem);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--theme-spacing-md, 1rem);
     opacity: 1;
     transition: opacity 0.2s ease;
     height: calc(100vh - 81px);

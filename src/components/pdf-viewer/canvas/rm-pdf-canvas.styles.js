@@ -13,8 +13,8 @@ export default css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+    padding: var(--theme-spacing-lg, 2rem);
     background: var(--theme-neutral-100, #f3f3f3);
-    gap: 1rem;
+    gap: var(--theme-spacing-md, 1rem);
   }
 `

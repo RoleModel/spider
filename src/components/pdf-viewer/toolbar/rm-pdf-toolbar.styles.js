@@ -7,9 +7,9 @@ export default css`
   }
 
   .toolbar {
-    padding: 8px;
+    padding: var(--theme-spacing-sm, 0.5rem);
     background: var(--theme-neutral-50, #ffffff);
-    border-bottom: 1px solid var(--theme-border, #ddd);
+    border-bottom: var(--theme-border-width-sm, 1px) solid var(--theme-border, #ddd);
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -17,16 +17,16 @@ export default css`
   }
 
   button {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--theme-neutral-300, #ccc);
+    padding: var(--theme-spacing-sm, 0.5rem) var(--theme-spacing-md, 1rem);
+    border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
     background: white;
-    border-radius: 4px;
+    border-radius: var(--theme-border-radius-md, 4px);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: var(--theme-font-size-base, 0.9rem);
   }
 
   .btn--icon {
-    padding: 0.25rem;
+    padding: var(--theme-spacing-xs, 0.25rem);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,12 +69,12 @@ export default css`
   }
 
   .page-input {
-    width: 1rem;
+    width: var(--theme-spacing-md, 1rem);
     text-align: center;
-    border: 1px solid var(--theme-neutral-300, #ccc);
-    border-radius: 4px;
-    padding: 0.25rem;
-    font-size: 0.9rem;
+    border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
+    border-radius: var(--theme-border-radius-md, 4px);
+    padding: var(--theme-spacing-xs, 0.25rem);
+    font-size: var(--theme-font-size-base, 0.9rem);
     font-weight: 500;
     background-color: var(--theme-neutral-50, #fafafa);
 
@@ -102,17 +102,17 @@ export default css`
   .toolbar__section {
     display: flex;
     align-items: center;
-    gap: 3rem;
+    gap: var(--theme-spacing-xl, 3rem);
   }
 
   .toolbar__section-group {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--theme-spacing-sm, 0.5rem);
   }
 
   .zoom-level {
-    min-width: 3rem;
+    min-width: var(--theme-spacing-xl, 3rem);
     text-align: center;
     font-weight: 500;
     color: var(--theme-neutral-500, #333);
