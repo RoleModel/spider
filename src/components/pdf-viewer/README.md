@@ -5,6 +5,7 @@ A composable PDF viewer web component built with Lit and PDF.js.
 ## Features
 
 - 📄 Full PDF rendering with PDF.js
+- 📝 Text selection and copying
 - 🖼️ Thumbnail navigation sidebar
 - 🔍 Zoom controls (in/out)
 - ⏮️ Page navigation (previous/next)
@@ -136,6 +137,18 @@ The component uses Shadow DOM with CSS custom properties for styling. Each sub-c
 ## Context API
 
 Child components access shared state through a Symbol-based context pattern. See `COMPONENT-ARCHITECTURE.md` for technical details.
+
+## Text Selection
+
+The PDF viewer implements a text layer overlay system similar to the official PDF.js viewer, allowing users to select and copy text directly from the PDF:
+
+- Text is rendered in an invisible layer positioned precisely over the PDF canvas
+- Selection highlighting appears when text is selected
+- Users can copy selected text to clipboard using standard browser shortcuts (Cmd/Ctrl+C)
+- Text layer automatically scales with zoom level
+- No additional configuration required - works out of the box
+
+The text layer is implemented in the `pdf-canvas` component using PDF.js's `getTextContent()` API to extract and position text elements.
 
 ## License
 
