@@ -36,9 +36,45 @@ Simply copy the entire `pdf-viewer` directory into your project.
 
 ### Properties
 
-| Property | Type   | Description              |
-|----------|--------|--------------------------|
-| `src`    | String | Path to the PDF file     |
+| Property | Type   | Default | Description              |
+|----------|--------|---------|--------------------------|
+| `src`    | String | `''`    | Path to the PDF file     |
+| `theme-hue` | Number | `217` | Hue value (0-360) for the theme color |
+| `theme-saturation` | Number | `89` | Saturation value (0-100) for the theme color |
+
+### Theme Customization
+
+The PDF viewer supports theme customization through HSL (Hue, Saturation, Lightness) values. You can set the primary theme color by adjusting the hue and saturation:
+
+```html
+<!-- Blue theme (default) -->
+<rm-pdf-viewer src="/document.pdf" theme-hue="217" theme-saturation="89"></rm-pdf-viewer>
+
+<!-- Green theme -->
+<rm-pdf-viewer src="/document.pdf" theme-hue="142" theme-saturation="76"></rm-pdf-viewer>
+
+<!-- Purple theme -->
+<rm-pdf-viewer src="/document.pdf" theme-hue="271" theme-saturation="76"></rm-pdf-viewer>
+
+<!-- Red theme -->
+<rm-pdf-viewer src="/document.pdf" theme-hue="4" theme-saturation="90"></rm-pdf-viewer>
+```
+
+The component automatically generates a complete color scale based on your theme values:
+- `--theme-primary`: Main theme color
+- `--theme-primary-light`: Lighter variant
+- `--theme-primary-lighter`: Even lighter variant
+- `--theme-primary-dark`: Darker variant
+- `--theme-primary-darker`: Even darker variant
+- `--theme-neutral-*`: Grayscale colors (50-600)
+- `--theme-border`: Border color
+- `--theme-shadow`: Shadow color
+
+These CSS variables are automatically applied to:
+- Active page indicators
+- Focus states on inputs
+- Hover states on thumbnails
+- Border highlights
 
 ### Events
 

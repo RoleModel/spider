@@ -8,20 +8,20 @@ export default css`
 
   .thumbnail-container {
     padding: 8px;
-    border: 2px solid #efefef;
+    border: 2px solid var(--theme-neutral-200, #efefef);
     border-radius: 4px;
     transition: all 0.2s ease;
     background: white;
   }
 
   .thumbnail-container:hover {
-    border-color: #4285f4;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--theme-primary, #4285f4);
+    box-shadow: 0 2px 8px var(--theme-shadow, rgba(0, 0, 0, 0.1));
   }
 
   .thumbnail-container.active {
-    border-color: #1967d2;
-    background: #e8f0fe;
+    border-color: var(--theme-primary-dark, #1967d2);
+    background: var(--theme-primary-lighter, #e8f0fe);
   }
 
   canvas {
@@ -35,7 +35,7 @@ export default css`
     text-align: center;
     margin-top: 4px;
     font-size: 12px;
-    color: #5f6368;
+    color: var(--theme-neutral-400, #5f6368);
     font-weight: 500;
   }
 `

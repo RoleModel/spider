@@ -14,7 +14,7 @@ export default css`
     flex-direction: column;
     align-items: center;
     padding: 2rem;
-    background: #f3f3f3;
+    background: var(--theme-neutral-100, #f3f3f3);
     gap: 1rem;
   }
 `

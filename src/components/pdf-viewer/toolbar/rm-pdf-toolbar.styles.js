@@ -8,8 +8,8 @@ export default css`
 
   .toolbar {
     padding: 8px;
-    background: #ffffff;
-    border-bottom: 1px solid #ddd;
+    background: var(--theme-neutral-50, #ffffff);
+    border-bottom: 1px solid var(--theme-border, #ddd);
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -18,7 +18,7 @@ export default css`
 
   button {
     padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--theme-neutral-300, #ccc);
     background: white;
     border-radius: 4px;
     cursor: pointer;
@@ -55,7 +55,7 @@ export default css`
   }
 
   button:hover:not(:disabled) {
-    background: #e9e9e9;
+    background: var(--theme-neutral-100, #e9e9e9);
   }
 
   button:disabled {
@@ -65,27 +65,27 @@ export default css`
 
   .page-info {
     font-weight: 500;
-    color: #333;
+    color: var(--theme-neutral-500, #333);
   }
 
   .page-input {
     width: 1rem;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--theme-neutral-300, #ccc);
     border-radius: 4px;
     padding: 0.25rem;
     font-size: 0.9rem;
     font-weight: 500;
-    background-color: #fafafa;
+    background-color: var(--theme-neutral-50, #fafafa);
 
     &:hover {
-      background-color: #f3f3f3;
+      background-color: var(--theme-neutral-100, #f3f3f3);
     }
   }
 
   .page-input:focus {
     outline: none;
-    border-color: #0066cc;
+    border-color: var(--theme-primary, #0066cc);
     font-weight: bold;
   }
 
@@ -115,6 +115,6 @@ export default css`
     min-width: 3rem;
     text-align: center;
     font-weight: 500;
-    color: #333;
+    color: var(--theme-neutral-500, #333);
   }
 `

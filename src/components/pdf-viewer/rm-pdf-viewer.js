@@ -14,6 +14,8 @@ export default class PDFViewer extends LitElement {
   static get properties() {
     return {
       src: { type: String },
+      themeHue: { type: Number, attribute: 'theme-hue' },
+      themeSaturation: { type: Number, attribute: 'theme-saturation' },
       pdfDoc: { type: Object, state: true },
       currentPage: { type: Number, state: true },
       totalPages: { type: Number, state: true },
@@ -29,6 +31,8 @@ export default class PDFViewer extends LitElement {
   constructor() {
     super()
     this.src = ''
+    this.themeHue = 217
+    this.themeSaturation = 89
     this.pdfDoc = null
     this.currentPage = 1
     this.totalPages = 0
@@ -166,12 +170,39 @@ export default class PDFViewer extends LitElement {
       this._provider.setValue(this._createContextValue())
     }
 
+    if (changedProperties.has('themeHue') || changedProperties.has('themeSaturation')) {
+      this._updateThemeColors()
+    }
+
     if (changedProperties.has('src') && this.src) {
       await this.loadPDF()
     }
   }
 
+  _updateThemeColors() {
+    const h = this.themeHue
+    const s = this.themeSaturation
+
+    this.style.setProperty('--theme-primary', `hsl(${h}, ${s}%, 50%)`)
+    this.style.setProperty('--theme-primary-light', `hsl(${h}, ${s}%, 90%)`)
+    this.style.setProperty('--theme-primary-lighter', `hsl(${h}, ${s}%, 95%)`)
+    this.style.setProperty('--theme-primary-dark', `hsl(${h}, ${s}%, 40%)`)
+    this.style.setProperty('--theme-primary-darker', `hsl(${h}, ${s}%, 30%)`)
+
+    this.style.setProperty('--theme-neutral-50', 'hsl(0, 0%, 98%)')
+    this.style.setProperty('--theme-neutral-100', 'hsl(0, 0%, 95%)')
+    this.style.setProperty('--theme-neutral-200', 'hsl(0, 0%, 87%)')
+    this.style.setProperty('--theme-neutral-300', 'hsl(0, 0%, 80%)')
+    this.style.setProperty('--theme-neutral-400', 'hsl(0, 0%, 63%)')
+    this.style.setProperty('--theme-neutral-500', 'hsl(0, 0%, 37%)')
+    this.style.setProperty('--theme-neutral-600', 'hsl(0, 0%, 20%)')
+
+    this.style.setProperty('--theme-border', 'hsl(0, 0%, 87%)')
+    this.style.setProperty('--theme-shadow', 'rgba(0, 0, 0, 0.1)')
+  }
+
   async firstUpdated() {
+    this._updateThemeColors()
     if (this.src) {
       await this.loadPDF()
     }

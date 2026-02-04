@@ -7,8 +7,8 @@ export default css`
 
   .sidebar {
     width: 200px;
-    background: #fafafa;
-    border-right: 1px solid #ddd;
+    background: var(--theme-neutral-50, #fafafa);
+    border-right: 1px solid var(--theme-border, #ddd);
     overflow: hidden;
     height: 100%;
     position: relative;
