@@ -69,11 +69,72 @@ export default class PDFViewer extends LitElement {
         if (this.scale > 0.5) {
           this.scale -= 0.25
         }
+      },
+      print: async () => {
+        await this.printPDF()
       }
     }
   }
 
-  updated(changedProperties) {
+  async printPDF() {
+    if (!this.pdfDoc) return
+
+    try {
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      document.body.appendChild(iframe)
+
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
+
+      const style = iframeDoc.createElement('style')
+      style.textContent = `
+        @page {
+          margin: 0;
+          size: auto;
+        }
+        body {
+          margin: 0;
+        }
+        img {
+          display: block;
+          width: 100%;
+        }
+      `
+      iframeDoc.head.appendChild(style)
+
+      for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
+        const page = await this.pdfDoc.getPage(pageNum)
+        const viewport = page.getViewport({ scale: 1.5 })
+
+        const canvas = document.createElement('canvas')
+        const context = canvas.getContext('2d')
+        canvas.width = viewport.width
+        canvas.height = viewport.height
+
+        await page.render({
+          canvasContext: context,
+          viewport: viewport
+        }).promise
+
+        const img = document.createElement('img')
+        img.src = canvas.toDataURL()
+        img.style.width = '100%'
+        img.style.pageBreakAfter = pageNum < this.totalPages ? 'always' : 'auto'
+        iframeDoc.body.appendChild(img)
+      }
+
+      iframe.contentWindow.focus()
+      iframe.contentWindow.print()
+
+      setTimeout(() => {
+        document.body.removeChild(iframe)
+      }, 1000)
+    } catch (error) {
+      console.error('Error printing PDF:', error)
+    }
+  }
+
+  async updated(changedProperties) {
     if (
       changedProperties.has('pdfDoc') ||
       changedProperties.has('currentPage') ||
@@ -84,7 +145,7 @@ export default class PDFViewer extends LitElement {
     }
 
     if (changedProperties.has('src') && this.src) {
-      this.loadPDF()
+      await this.loadPDF()
     }
   }
 

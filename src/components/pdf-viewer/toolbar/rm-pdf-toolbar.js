@@ -30,6 +30,10 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.zoomOut()
   }
 
+  print() {
+    this.context?.print()
+  }
+
   render() {
     if (!this.context) return html``
 
@@ -62,7 +66,7 @@ export default class PDFToolbar extends PDFViewerComponent {
           </div>
 
           <div class="toolbar__section-group">
-            <button class="btn--icon" @click="">
+            <button class="btn--icon" @click="${this.print}">
               <img src=${printIcon} alt="Print" />
             </button>
             <button class="btn--icon" @click="">
