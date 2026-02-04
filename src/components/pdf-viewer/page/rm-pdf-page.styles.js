@@ -15,7 +15,7 @@ export default css`
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .textLayer {
+  .text-layer {
     position: absolute;
     left: 0;
     top: 0;
@@ -23,14 +23,19 @@ export default css`
     opacity: 0.2;
     line-height: 1;
     text-align: initial;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
-  .textLayer > div {
+  .text-layer > div {
     color: transparent;
     position: absolute;
     white-space: pre;
     cursor: text;
     transform-origin: 0% 0%;
+    user-select: text;
+  }
+
+  .text-layer > div::selection {
+    background-color: rgba(0, 150, 255, 0.9);
   }
 `

@@ -47,7 +47,6 @@ export default class PDFViewer extends LitElement {
       totalPages: this.totalPages,
       scale: this.scale,
       setCurrentPage: (page) => {
-        console.log('setCurrentPage', page)
         this.currentPage = page
       },
       setScale: (scale) => {
@@ -81,7 +80,6 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('totalPages') ||
       changedProperties.has('scale')
     ) {
-      console.log('setting value', this._createContextValue())
       this._provider.setValue(this._createContextValue())
     }
 

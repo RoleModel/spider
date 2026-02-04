@@ -62,7 +62,7 @@ export default class PDFPage extends LitElement {
       await this._renderTask.promise
       this._renderTask = null
 
-      const textLayerDiv = this.shadowRoot.querySelector('.textLayer')
+      const textLayerDiv = this.shadowRoot.querySelector('.text-layer')
       textLayerDiv.style.width = `${viewport.width}px`
       textLayerDiv.style.height = `${viewport.height}px`
       textLayerDiv.innerHTML = ''
@@ -119,7 +119,7 @@ export default class PDFPage extends LitElement {
     return html`
       <div class="page-wrapper">
         <canvas data-page-number="${this.pageNumber}"></canvas>
-        <div class="textLayer"></div>
+        <div class="text-layer"></div>
       </div>
     `
   }
