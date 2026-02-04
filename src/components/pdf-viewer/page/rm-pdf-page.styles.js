@@ -36,6 +36,6 @@ export default css`
   }
 
   .text-layer > div::selection {
-    background-color: rgba(0, 150, 255, 0.9);
+    background-color: var(--theme-primary-transparent);
   }
 `

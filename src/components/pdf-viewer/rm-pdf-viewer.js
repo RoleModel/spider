@@ -188,6 +188,7 @@ export default class PDFViewer extends LitElement {
     this.style.setProperty('--theme-primary-lighter', `hsl(${h}, ${s}%, 95%)`)
     this.style.setProperty('--theme-primary-dark', `hsl(${h}, ${s}%, 40%)`)
     this.style.setProperty('--theme-primary-darker', `hsl(${h}, ${s}%, 30%)`)
+    this.style.setProperty('--theme-primary-transparent', `hsla(${h}, ${s}%, 50%, 70%)`)
 
     this.style.setProperty('--theme-neutral-50', 'hsl(0, 0%, 98%)')
     this.style.setProperty('--theme-neutral-100', 'hsl(0, 0%, 95%)')
