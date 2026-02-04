@@ -1,7 +1,7 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './pdf-canvas.styles.js'
-import '../page/pdf-page.js'
+import styles from './rm-pdf-canvas.styles.js'
+import '../page/rm-pdf-page.js'
 
 export default class PDFCanvas extends PDFViewerComponent {
   static get styles() {
@@ -62,7 +62,7 @@ export default class PDFCanvas extends PDFViewerComponent {
 
   scrollToPage(pageNum) {
     const container = this.shadowRoot.querySelector('.canvas-container')
-    const pageElements = this.shadowRoot.querySelectorAll('pdf-page')
+    const pageElements = this.shadowRoot.querySelectorAll('rm-pdf-page')
     const targetPage = Array.from(pageElements).find(
       el => el.pageNumber === pageNum
     )
@@ -92,7 +92,7 @@ export default class PDFCanvas extends PDFViewerComponent {
       const containerRect = container.getBoundingClientRect()
       const centerY = containerRect.top + containerRect.height / 2
 
-      const pageElements = this.shadowRoot.querySelectorAll('pdf-page')
+      const pageElements = this.shadowRoot.querySelectorAll('rm-pdf-page')
       let currentPage = 1
 
       for (const pageElement of pageElements) {
@@ -122,16 +122,16 @@ export default class PDFCanvas extends PDFViewerComponent {
     return html`
       <div class="canvas-container">
         ${this.pages.map(({ page, pageNumber }) => html`
-          <pdf-page
+          <rm-pdf-page
             .page=${page}
             .scale=${this.context?.scale || 1}
             .pageNumber=${pageNumber}>
-          </pdf-page>
+          </rm-pdf-page>
         `)}
       </div>
     `
   }
 }
 
-customElements.define('pdf-canvas', PDFCanvas)
+customElements.define('rm-pdf-canvas', PDFCanvas)
 

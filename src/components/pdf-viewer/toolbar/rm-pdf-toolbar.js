@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './pdf-toolbar.styles.js'
+import styles from './rm-pdf-toolbar.styles.js'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
@@ -53,5 +53,5 @@ export default class PDFToolbar extends PDFViewerComponent {
   }
 }
 
-customElements.define('pdf-toolbar', PDFToolbar)
+customElements.define('rm-pdf-toolbar', PDFToolbar)
 

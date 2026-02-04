@@ -1,7 +1,7 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './pdf-sidebar.styles.js'
-import '../thumbnail/pdf-thumbnail.js'
+import styles from './rm-pdf-sidebar.styles.js'
+import '../thumbnail/rm-pdf-thumbnail.js'
 
 
 export default class PDFSidebar extends PDFViewerComponent {
@@ -19,9 +19,9 @@ export default class PDFSidebar extends PDFViewerComponent {
     const thumbnails = []
     for (let i = 1; i <= totalPages; i++) {
       thumbnails.push(html`
-        <pdf-thumbnail
+        <rm-pdf-thumbnail
           .pageNumber="${i}"
-        ></pdf-thumbnail>
+        ></rm-pdf-thumbnail>
       `)
     }
     return thumbnails
@@ -38,5 +38,5 @@ export default class PDFSidebar extends PDFViewerComponent {
   }
 }
 
-customElements.define('pdf-sidebar', PDFSidebar)
+customElements.define('rm-pdf-sidebar', PDFSidebar)
 

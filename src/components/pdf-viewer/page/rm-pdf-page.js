@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit'
 import * as pdfjsLib from 'pdfjs-dist'
-import styles from './pdf-page.styles.js'
+import styles from './rm-pdf-page.styles.js'
 
 export default class PDFPage extends LitElement {
   static get styles() {
@@ -125,4 +125,4 @@ export default class PDFPage extends LitElement {
   }
 }
 
-customElements.define('pdf-page', PDFPage)
+customElements.define('rm-pdf-page', PDFPage)

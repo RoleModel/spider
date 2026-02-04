@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './pdf-thumbnail.styles.js'
+import styles from './rm-pdf-thumbnail.styles.js'
 
 export default class PDFThumbnail extends PDFViewerComponent {
   static get properties() {
@@ -86,4 +86,4 @@ export default class PDFThumbnail extends PDFViewerComponent {
   }
 }
 
-customElements.define('pdf-thumbnail', PDFThumbnail)
+customElements.define('rm-pdf-thumbnail', PDFThumbnail)
