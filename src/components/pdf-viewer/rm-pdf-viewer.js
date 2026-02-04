@@ -67,13 +67,11 @@ export default class PDFViewer extends LitElement {
       },
       nextPage: () => {
         if (this.currentPage < this.totalPages) {
-          this.shouldScroll = true
           this.currentPage++
         }
       },
       previousPage: () => {
         if (this.currentPage > 1) {
-          this.shouldScroll = true
           this.currentPage--
         }
       },

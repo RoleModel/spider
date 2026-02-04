@@ -17,10 +17,12 @@ export default class PDFToolbar extends PDFViewerComponent {
   }
 
   previousPage() {
+    this.context?.setShouldScroll(true)
     this.context?.previousPage()
   }
 
   nextPage() {
+    this.context?.setShouldScroll(true)
     this.context?.nextPage()
   }
 
@@ -47,6 +49,7 @@ export default class PDFToolbar extends PDFViewerComponent {
   handlePageInput(e) {
     const value = parseInt(e.target.value, 10)
     if (!isNaN(value) && value >= 1 && value <= this.context.totalPages) {
+      this.context?.setShouldScroll(true)
       this.context?.setCurrentPage(value)
     }
   }
