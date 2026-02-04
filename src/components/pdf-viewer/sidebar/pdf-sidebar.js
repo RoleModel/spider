@@ -1,42 +1,26 @@
-import { LitElement, html } from 'lit'
-import { ContextConsumer } from '@lit/context'
+import { html } from 'lit'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-sidebar.styles.js'
-import { pdfContext } from '../pdf-context.js'
 import '../thumbnail/pdf-thumbnail.js'
 
 
-export default class PDFSidebar extends LitElement {
+export default class PDFSidebar extends PDFViewerComponent {
   static get styles() {
     return styles
-  }
-
-  constructor() {
-    super()
-    this._contextConsumer = new ContextConsumer(this, {
-      context: pdfContext,
-      callback: (value) => {
-        this.context = value
-        this.requestUpdate()
-      },
-      subscribe: true
-    })
-    this.context = null
   }
 
   renderThumbnails() {
     if (!this.context?.pdfDoc) return html``
 
-    const { pdfDoc, totalPages, currentPage } = this.context
+    const { totalPages } = this.context
 
-    if (!pdfDoc || totalPages === 0) return html``
+    if (totalPages === 0) return html``
 
     const thumbnails = []
     for (let i = 1; i <= totalPages; i++) {
       thumbnails.push(html`
         <pdf-thumbnail
           .pageNumber="${i}"
-          .pdfDoc="${pdfDoc}"
-          .isActive="${i === currentPage}"
         ></pdf-thumbnail>
       `)
     }

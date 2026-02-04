@@ -1,62 +1,142 @@
-import { LitElement, html } from 'lit'
-import { ContextConsumer } from '@lit/context'
+import { html } from 'lit'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-canvas.styles.js'
-import { pdfContext } from '../pdf-context.js'
 
-export default class PDFCanvas extends LitElement {
+export default class PDFCanvas extends PDFViewerComponent {
   static get styles() {
     return styles
   }
 
+  static get properties() {
+    return {
+      renderedPages: { type: Number, state: true }
+    }
+  }
+
   constructor() {
     super()
-    this._contextConsumer = new ContextConsumer(this, {
-      context: pdfContext,
-      callback: (value) => {
-        this.context = value
-        this.requestUpdate()
-      },
-      subscribe: true
-    })
-    this.context = null
+    this.renderedPages = 0
+    this.isScrolling = false
+    this.scrollTimeout = null
   }
 
   async updated(changedProperties) {
-    await this.renderPage()
+    if (this.context?.pdfDoc) {
+      const needsRerender = changedProperties.has('context') && (
+        !changedProperties.get('context')?.pdfDoc ||
+        changedProperties.get('context')?.scale !== this.context.scale
+      )
+
+      if (needsRerender || this.renderedPages === 0) {
+        await this.renderAllPages()
+      }
+    }
+
+    if (changedProperties.has('context') && this.context?.currentPage) {
+      const oldContext = changedProperties.get('context')
+      if (oldContext?.currentPage !== this.context.currentPage && !this.isScrolling) {
+        setTimeout(() => this.scrollToPage(this.context.currentPage), 100)
+      }
+    }
   }
 
-  async renderPage() {
+  async renderAllPages() {
     if (!this.context?.pdfDoc) return
 
-    const { pdfDoc, currentPage, scale } = this.context
+    const { pdfDoc, totalPages, scale } = this.context
+    const container = this.shadowRoot.querySelector('.canvas-container')
+    if (!container) return
 
-    try {
-      const page = await pdfDoc.getPage(currentPage)
-      const canvas = this.shadowRoot.querySelector('#pdf-canvas')
-      if (!canvas) return
+    container.innerHTML = ''
 
-      const canvasContext = canvas.getContext('2d')
-      const viewport = page.getViewport({ scale })
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      try {
+        const page = await pdfDoc.getPage(pageNum)
+        const viewport = page.getViewport({ scale })
 
-      canvas.height = viewport.height
-      canvas.width = viewport.width
+        const pageWrapper = document.createElement('div')
+        pageWrapper.className = 'page-wrapper'
 
-      const renderContext = {
-        canvasContext,
-        viewport
+        const canvas = document.createElement('canvas')
+        const canvasContext = canvas.getContext('2d')
+
+        canvas.height = viewport.height
+        canvas.width = viewport.width
+        canvas.dataset.pageNumber = pageNum
+
+        await page.render({
+          canvasContext,
+          viewport
+        }).promise
+
+        pageWrapper.appendChild(canvas)
+        container.appendChild(pageWrapper)
+      } catch (error) {
+        console.error(`Error rendering page ${pageNum}:`, error)
+      }
+    }
+
+    this.renderedPages = totalPages
+  }
+
+  scrollToPage(pageNum) {
+    const container = this.shadowRoot.querySelector('.canvas-container')
+    const canvas = this.shadowRoot.querySelector(`canvas[data-page-number="${pageNum}"]`)
+
+    if (container && canvas) {
+      const containerTop = container.getBoundingClientRect().top
+      const canvasTop = canvas.getBoundingClientRect().top
+      const offset = canvasTop - containerTop + container.scrollTop - 32
+
+      container.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  handleScroll() {
+    if (!this.context?.setCurrentPage) return
+
+    this.isScrolling = true
+    clearTimeout(this.scrollTimeout)
+
+    this.scrollTimeout = setTimeout(() => {
+      const container = this.shadowRoot.querySelector('.canvas-container')
+      if (!container) return
+
+      const containerRect = container.getBoundingClientRect()
+      const centerY = containerRect.top + containerRect.height / 2
+
+      const canvases = this.shadowRoot.querySelectorAll('canvas')
+      let currentPage = 1
+
+      for (const canvas of canvases) {
+        const rect = canvas.getBoundingClientRect()
+        if (rect.top <= centerY && rect.bottom >= centerY) {
+          currentPage = parseInt(canvas.dataset.pageNumber, 10)
+          break
+        }
       }
 
-      await page.render(renderContext).promise
-    } catch (error) {
-      console.error('Error rendering page:', error)
+      if (currentPage !== this.context.currentPage) {
+        this.context.setCurrentPage(currentPage)
+      }
+
+      this.isScrolling = false
+    }, 150)
+  }
+
+  firstUpdated() {
+    const container = this.shadowRoot.querySelector('.canvas-container')
+    if (container) {
+      container.addEventListener('scroll', () => this.handleScroll())
     }
   }
 
   render() {
     return html`
-      <div class="canvas-container">
-        <canvas id="pdf-canvas"></canvas>
-      </div>
+      <div class="canvas-container"></div>
     `
   }
 }

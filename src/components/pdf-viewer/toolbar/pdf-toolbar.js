@@ -1,24 +1,10 @@
-import { LitElement, html } from 'lit'
-import { ContextConsumer } from '@lit/context'
+import { html } from 'lit'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-toolbar.styles.js'
-import { pdfContext } from '../pdf-context.js'
 
-export default class PDFToolbar extends LitElement {
+export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
     return styles
-  }
-
-  constructor() {
-    super()
-    this._contextConsumer = new ContextConsumer(this, {
-      context: pdfContext,
-      callback: (value) => {
-        this.context = value
-        this.requestUpdate()
-      },
-      subscribe: true
-    })
-    this.context = null
   }
 
   previousPage() {

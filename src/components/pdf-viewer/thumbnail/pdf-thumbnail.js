@@ -1,16 +1,11 @@
-import { LitElement, html } from 'lit'
-import { consume } from '@lit/context'
+import { html } from 'lit'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-thumbnail.styles.js'
-import { pdfContext } from '../pdf-context.js'
 
-export default class PDFThumbnail extends LitElement {
+export default class PDFThumbnail extends PDFViewerComponent {
   static get properties() {
     return {
-      pageNumber: { type: Number },
-      pdfDoc: { type: Object },
-      scale: { type: Number },
-      isActive: { type: Boolean },
-      _context: { type: Object, state: true }
+      pageNumber: { type: Number }
     }
   }
 
@@ -21,13 +16,7 @@ export default class PDFThumbnail extends LitElement {
   constructor() {
     super()
     this.pageNumber = 1
-    this.pdfDoc = null
     this.scale = 0.3
-    this.isActive = false
-    this._context = null
-    consume(this, pdfContext, (value) => {
-      this._context = value
-    })
   }
 
   async firstUpdated() {
@@ -35,16 +24,21 @@ export default class PDFThumbnail extends LitElement {
   }
 
   async updated(changedProperties) {
-    if (changedProperties.has('pdfDoc') || changedProperties.has('pageNumber')) {
+    if (changedProperties.has('pageNumber')) {
+      await this.renderThumbnail()
+    }
+    if (this.context?.pdfDoc) {
       await this.renderThumbnail()
     }
   }
 
   async renderThumbnail() {
-    if (!this.pdfDoc) return
+    if (!this.context?.pdfDoc) return
+
+    const pdfDoc = this.context.pdfDoc
 
     try {
-      const page = await this.pdfDoc.getPage(this.pageNumber)
+      const page = await pdfDoc.getPage(this.pageNumber)
       const canvas = this.shadowRoot.querySelector('#thumbnail-canvas')
       if (!canvas) return
 
@@ -67,13 +61,15 @@ export default class PDFThumbnail extends LitElement {
 
   handleClick() {
     console.log('Thumbnail clicked:', this.pageNumber)
-    this._context?.setCurrentPage(this.pageNumber)
+    this.context?.setCurrentPage(this.pageNumber)
   }
 
   render() {
+    const isActive = this.context?.currentPage === this.pageNumber
+
     return html`
       <div 
-        class="thumbnail-container ${this.isActive ? 'active' : ''}"
+        class="thumbnail-container ${isActive ? 'active' : ''}"
         @click="${this.handleClick}"
       >
         <canvas id="thumbnail-canvas"></canvas>
