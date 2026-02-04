@@ -33,7 +33,8 @@
     "build": "tsc && rsync -a src/assets dist/"
   },
   "dependencies": {
-    "lit": "^3.3.2"
+    "lit": "^3.3.2",
+    "pdfjs-dist": "^5.4.624"
   },
   "devDependencies": {
     "vite": "^7.2.4"
