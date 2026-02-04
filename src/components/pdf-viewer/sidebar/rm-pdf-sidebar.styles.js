@@ -9,8 +9,14 @@ export default css`
     width: 200px;
     background: #fafafa;
     border-right: 1px solid #ddd;
-    overflow-y: auto;
+    overflow: hidden;
     height: 100%;
+    position: relative;
+    transition: width 0.3s ease;
+  }
+
+  .sidebar.collapsed {
+    width: 0;
   }
 
   .thumbnails-container {
@@ -18,5 +24,12 @@ export default css`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .sidebar.collapsed .thumbnails-container {
+    opacity: 0;
+    pointer-events: none;
   }
 `

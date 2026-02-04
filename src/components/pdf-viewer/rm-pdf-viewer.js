@@ -10,7 +10,6 @@ import './canvas/rm-pdf-canvas.js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-
 export default class PDFViewer extends LitElement {
   static get properties() {
     return {
@@ -18,7 +17,8 @@ export default class PDFViewer extends LitElement {
       pdfDoc: { type: Object, state: true },
       currentPage: { type: Number, state: true },
       totalPages: { type: Number, state: true },
-      scale: { type: Number, state: true }
+      scale: { type: Number, state: true },
+      sidebarCollapsed: { type: Boolean, state: true }
     }
   }
 
@@ -33,6 +33,7 @@ export default class PDFViewer extends LitElement {
     this.currentPage = 1
     this.totalPages = 0
     this.scale = 1.5
+    this.sidebarCollapsed = false
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -46,6 +47,7 @@ export default class PDFViewer extends LitElement {
       currentPage: this.currentPage,
       totalPages: this.totalPages,
       scale: this.scale,
+      sidebarCollapsed: this.sidebarCollapsed,
       setCurrentPage: (page) => {
         this.currentPage = page
       },
@@ -75,6 +77,9 @@ export default class PDFViewer extends LitElement {
       },
       download: () => {
         this.downloadPDF()
+      },
+      toggleSidebar: () => {
+        this.sidebarCollapsed = !this.sidebarCollapsed
       }
     }
   }
@@ -155,7 +160,8 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('pdfDoc') ||
       changedProperties.has('currentPage') ||
       changedProperties.has('totalPages') ||
-      changedProperties.has('scale')
+      changedProperties.has('scale') ||
+      changedProperties.has('sidebarCollapsed')
     ) {
       this._provider.setValue(this._createContextValue())
     }

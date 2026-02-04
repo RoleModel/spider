@@ -34,6 +34,30 @@ export default css`
     border: none;
   }
 
+  .sidebar-toggle {
+    position: relative;
+  }
+
+  .sidebar-toggle img {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .sidebar-toggle .icon-open {
+    display: none;
+  }
+
+  .sidebar-toggle .icon-close {
+    display: block;
+  }
+
+  .sidebar-toggle.collapsed .icon-open {
+    display: block;
+  }
+
+  .sidebar-toggle.collapsed .icon-close {
+    display: none;
+  }
+
   button:hover:not(:disabled) {
     background: #e9e9e9;
   }

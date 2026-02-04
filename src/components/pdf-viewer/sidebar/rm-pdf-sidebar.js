@@ -3,7 +3,6 @@ import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './rm-pdf-sidebar.styles.js'
 import '../thumbnail/rm-pdf-thumbnail.js'
 
-
 export default class PDFSidebar extends PDFViewerComponent {
   static get styles() {
     return styles
@@ -28,8 +27,12 @@ export default class PDFSidebar extends PDFViewerComponent {
   }
 
   render() {
+    if (!this.context) return html``
+
+    const { sidebarCollapsed } = this.context
+
     return html`
-      <div class="sidebar">
+      <div class="sidebar ${sidebarCollapsed ? 'collapsed' : ''}">
         <div class="thumbnails-container">
           ${this.renderThumbnails()}
         </div>
