@@ -72,6 +72,9 @@ export default class PDFViewer extends LitElement {
       },
       print: async () => {
         await this.printPDF()
+      },
+      download: () => {
+        this.downloadPDF()
       }
     }
   }
@@ -131,6 +134,19 @@ export default class PDFViewer extends LitElement {
       }, 1000)
     } catch (error) {
       console.error('Error printing PDF:', error)
+    }
+  }
+
+  downloadPDF() {
+    if (!this.src) return
+
+    try {
+      const link = document.createElement('a')
+      link.href = this.src
+      link.download = this.src.split('/').pop() || 'document.pdf'
+      link.click()
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
     }
   }
 

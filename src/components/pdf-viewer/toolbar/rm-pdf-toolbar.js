@@ -34,6 +34,10 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.print()
   }
 
+  download() {
+    this.context?.download()
+  }
+
   render() {
     if (!this.context) return html``
 
@@ -69,7 +73,7 @@ export default class PDFToolbar extends PDFViewerComponent {
             <button class="btn--icon" @click="${this.print}">
               <img src=${printIcon} alt="Print" />
             </button>
-            <button class="btn--icon" @click="">
+            <button class="btn--icon" @click="${this.download}">
               <img src=${downloadIcon} alt="Download" />
             </button>
           </div>
