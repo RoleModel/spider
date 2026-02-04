@@ -5,7 +5,8 @@ export default css`
     display: block;
     width: 100%;
     height: 100vh;
-    
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 14px;
   }
   
   .pdf-viewer-container {
