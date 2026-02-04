@@ -2,31 +2,99 @@ import { LitElement, html } from 'lit'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
+import './toolbar/pdf-toolbar.js'
+import './sidebar/pdf-sidebar.js'
+import './canvas/pdf-canvas.js'
 
-// Configure the worker path for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+
+const PDFContext = Symbol('pdf-context')
 
 export default class PDFViewer extends LitElement {
   static get properties() {
     return {
-      src: { type: String },
-      currentPage: { type: Number },
-      totalPages: { type: Number },
-      scale: { type: Number }
+      src: { type: String }
     }
   }
 
   static get styles() {
-    return styles;
+    return styles
   }
 
   constructor() {
     super()
     this.src = ''
+    this.pdfDoc = null
     this.currentPage = 1
     this.totalPages = 0
     this.scale = 1.5
-    this.pdfDoc = null
+
+    this[PDFContext] = {
+      getPdfDoc: () => this.pdfDoc,
+      getCurrentPage: () => this.currentPage,
+      getTotalPages: () => this.totalPages,
+      getScale: () => this.scale,
+      setCurrentPage: (page) => {
+        this.currentPage = page
+        this.requestUpdate()
+        this.dispatchEvent(new CustomEvent('page-change', {
+          detail: { pageNumber: page },
+          bubbles: true,
+          composed: true
+        }))
+      },
+      setScale: (scale) => {
+        this.scale = scale
+        this.requestUpdate()
+        this.dispatchEvent(new CustomEvent('scale-change', {
+          detail: { scale },
+          bubbles: true,
+          composed: true
+        }))
+      },
+      nextPage: () => {
+        if (this.currentPage < this.totalPages) {
+          this.currentPage++
+          this.requestUpdate()
+          this.dispatchEvent(new CustomEvent('page-change', {
+            detail: { pageNumber: this.currentPage },
+            bubbles: true,
+            composed: true
+          }))
+        }
+      },
+      previousPage: () => {
+        if (this.currentPage > 1) {
+          this.currentPage--
+          this.requestUpdate()
+          this.dispatchEvent(new CustomEvent('page-change', {
+            detail: { pageNumber: this.currentPage },
+            bubbles: true,
+            composed: true
+          }))
+        }
+      },
+      zoomIn: () => {
+        this.scale += 0.25
+        this.requestUpdate()
+        this.dispatchEvent(new CustomEvent('scale-change', {
+          detail: { scale: this.scale },
+          bubbles: true,
+          composed: true
+        }))
+      },
+      zoomOut: () => {
+        if (this.scale > 0.5) {
+          this.scale -= 0.25
+          this.requestUpdate()
+          this.dispatchEvent(new CustomEvent('scale-change', {
+            detail: { scale: this.scale },
+            bubbles: true,
+            composed: true
+          }))
+        }
+      }
+    }
   }
 
   async firstUpdated() {
@@ -49,88 +117,38 @@ export default class PDFViewer extends LitElement {
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
       this.currentPage = 1
-      await this.renderPage(this.currentPage)
+      this.requestUpdate()
+      this.dispatchEvent(new CustomEvent('pdf-loaded', {
+        detail: {
+          totalPages: this.totalPages,
+          pdfDoc: this.pdfDoc
+        },
+        bubbles: true,
+        composed: true
+      }))
     } catch (error) {
       console.error('Error loading PDF:', error)
+      this.dispatchEvent(new CustomEvent('pdf-error', {
+        detail: { error },
+        bubbles: true,
+        composed: true
+      }))
     }
-  }
-
-  async renderPage(pageNumber) {
-    if (!this.pdfDoc) return
-
-    try {
-      const page = await this.pdfDoc.getPage(pageNumber)
-      const canvas = this.shadowRoot.querySelector('#pdf-canvas')
-      const context = canvas.getContext('2d')
-
-      const viewport = page.getViewport({ scale: this.scale })
-      canvas.height = viewport.height
-      canvas.width = viewport.width
-
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      }
-
-      await page.render(renderContext).promise
-    } catch (error) {
-      console.error('Error rendering page:', error)
-    }
-  }
-
-  previousPage() {
-    if (this.currentPage <= 1) return
-    this.currentPage--
-    this.renderPage(this.currentPage)
-  }
-
-  nextPage() {
-    if (this.currentPage >= this.totalPages) return
-    this.currentPage++
-    this.renderPage(this.currentPage)
-  }
-
-  zoomIn() {
-    this.scale += 0.25
-    this.renderPage(this.currentPage)
-  }
-
-  zoomOut() {
-    if (this.scale <= 0.5) return
-    this.scale -= 0.25
-    this.renderPage(this.currentPage)
   }
 
   render() {
     return html`
       <div class="pdf-viewer-container">
-        <div class="toolbar">
-          <button @click="${this.previousPage}" ?disabled="${this.currentPage <= 1}">
-            Previous
-          </button>
-          <span class="page-info">
-            Page ${this.currentPage} of ${this.totalPages}
-          </span>
-          <button @click="${this.nextPage}" ?disabled="${this.currentPage >= this.totalPages}">
-            Next
-          </button>
-          <div class="zoom-controls">
-            <button @click="${this.zoomOut}" ?disabled="${this.scale <= 0.5}">
-              Zoom Out
-            </button>
-            <span class="zoom-level">${Math.round(this.scale * 100)}%</span>
-            <button @click="${this.zoomIn}">
-              Zoom In
-            </button>
-          </div>
-        </div>
-        <div class="canvas-container">
-          <canvas id="pdf-canvas"></canvas>
+        <pdf-toolbar></pdf-toolbar>
+        <div class="content-container">
+          <pdf-sidebar></pdf-sidebar>
+          <pdf-canvas></pdf-canvas>
         </div>
       </div>
     `
   }
 }
 
-customElements.define('pdf-viewer', PDFViewer);
+customElements.define('pdf-viewer', PDFViewer)
 
+export { PDFContext }
