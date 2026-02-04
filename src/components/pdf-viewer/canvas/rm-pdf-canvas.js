@@ -17,27 +17,16 @@ export default class PDFCanvas extends PDFViewerComponent {
   constructor() {
     super()
     this.pages = []
-    this.isScrolling = false
     this.scrollTimeout = null
   }
 
-  async updated(changedProperties) {
-    if (this.context?.pdfDoc) {
-      const needsRerender = changedProperties.has('context') && (
-        !changedProperties.get('context')?.pdfDoc ||
-        changedProperties.get('context')?.scale !== this.context.scale
-      )
-
-      if (needsRerender || this.pages.length === 0) {
-        await this.loadPages()
-      }
+  async updated() {
+    if (this.context?.pdfDoc && this.pages.length === 0) {
+      await this.loadPages()
     }
 
-    if (changedProperties.has('context') && this.context?.currentPage) {
-      const oldContext = changedProperties.get('context')
-      if (oldContext?.currentPage !== this.context.currentPage && !this.isScrolling) {
-        setTimeout(() => this.scrollToPage(this.context.currentPage), 100)
-      }
+    if (this.context?.currentPage !== this._contextCurrentPage) {
+      this.scrollToPage(this.context.currentPage)
     }
   }
 
@@ -82,7 +71,6 @@ export default class PDFCanvas extends PDFViewerComponent {
   handleScroll() {
     if (!this.context?.setCurrentPage) return
 
-    this.isScrolling = true
     clearTimeout(this.scrollTimeout)
 
     this.scrollTimeout = setTimeout(() => {
@@ -106,8 +94,6 @@ export default class PDFCanvas extends PDFViewerComponent {
       if (currentPage !== this.context.currentPage) {
         this.context.setCurrentPage(currentPage)
       }
-
-      this.isScrolling = false
     }, 150)
   }
 
