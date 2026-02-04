@@ -51,7 +51,10 @@ export default class PDFThumbnail extends PDFViewerComponent {
       await this._renderTask.promise
       this._renderTask = null
     } catch (error) {
-      console.error('Error rendering thumbnail:', error)
+      if (error.name !== 'RenderingCancelledException') {
+        console.error('Error rendering thumbnail:', error)
+      }
+      this._renderTask = null
     }
   }
 

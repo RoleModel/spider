@@ -53,20 +53,27 @@ export default class PDFPage extends LitElement {
 
     const scaledViewport = this.page.getViewport({ scale: this.scale * devicePixelRatio })
 
-    this._renderTask = this.page.render({
-      canvasContext,
-      viewport: scaledViewport
-    })
+    try {
+      this._renderTask = this.page.render({
+        canvasContext,
+        viewport: scaledViewport
+      })
 
-    await this._renderTask.promise
-    this._renderTask = null
+      await this._renderTask.promise
+      this._renderTask = null
 
-    const textLayerDiv = this.shadowRoot.querySelector('.textLayer')
-    textLayerDiv.style.width = `${viewport.width}px`
-    textLayerDiv.style.height = `${viewport.height}px`
-    textLayerDiv.innerHTML = ''
+      const textLayerDiv = this.shadowRoot.querySelector('.textLayer')
+      textLayerDiv.style.width = `${viewport.width}px`
+      textLayerDiv.style.height = `${viewport.height}px`
+      textLayerDiv.innerHTML = ''
 
-    await this.renderTextLayer(viewport, textLayerDiv)
+      await this.renderTextLayer(viewport, textLayerDiv)
+    } catch (error) {
+      if (error.name !== 'RenderingCancelledException') {
+        console.error('Error rendering page:', error)
+      }
+      this._renderTask = null
+    }
   }
 
   async renderTextLayer(viewport, textLayerDiv) {
