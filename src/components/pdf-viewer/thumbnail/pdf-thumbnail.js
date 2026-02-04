@@ -23,15 +23,6 @@ export default class PDFThumbnail extends PDFViewerComponent {
     await this.renderThumbnail()
   }
 
-  async updated(changedProperties) {
-    if (changedProperties.has('pageNumber')) {
-      await this.renderThumbnail()
-    }
-    if (this.context?.pdfDoc) {
-      await this.renderThumbnail()
-    }
-  }
-
   async renderThumbnail() {
     if (!this.context?.pdfDoc) return
 
@@ -68,7 +59,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
     const isActive = this.context?.currentPage === this.pageNumber
 
     return html`
-      <div 
+      <div
         class="thumbnail-container ${isActive ? 'active' : ''}"
         @click="${this.handleClick}"
       >
