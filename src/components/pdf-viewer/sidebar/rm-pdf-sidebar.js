@@ -8,6 +8,50 @@ export default class PDFSidebar extends PDFViewerComponent {
     return styles
   }
 
+  static get properties() {
+    return {
+      _lastScrolledPage: { type: Number, state: true }
+    }
+  }
+
+  constructor() {
+    super()
+    this._lastScrolledPage = 1
+  }
+
+  updated() {
+    if (this.context?.currentPage !== this._lastScrolledPage) {
+      this._lastScrolledPage = this.context.currentPage
+      this.scrollToActiveThumbnail()
+    }
+  }
+
+  scrollToActiveThumbnail() {
+    const container = this.shadowRoot.querySelector('.thumbnails-container')
+    const thumbnails = this.shadowRoot.querySelectorAll('rm-pdf-thumbnail')
+    const activeThumbnail = Array.from(thumbnails).find(
+      thumb => thumb.pageNumber === this.context.currentPage
+    )
+
+    if (container && activeThumbnail) {
+      const containerRect = container.getBoundingClientRect()
+      const thumbnailRect = activeThumbnail.getBoundingClientRect()
+      const containerTop = containerRect.top
+      const containerBottom = containerRect.bottom
+      const thumbnailTop = thumbnailRect.top
+      const thumbnailBottom = thumbnailRect.bottom
+
+      if (thumbnailTop < containerTop || thumbnailBottom > containerBottom) {
+        const offset = activeThumbnail.offsetTop - (container.clientHeight / 2) + (thumbnailRect.height / 2)
+
+        container.scrollTo({
+          top: offset,
+          behavior: 'smooth'
+        })
+      }
+    }
+  }
+
   renderThumbnails() {
     if (!this.context?.pdfDoc) return html``
 

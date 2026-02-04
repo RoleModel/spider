@@ -82,7 +82,7 @@ export default class PDFCanvas extends PDFViewerComponent {
       const centerY = containerRect.top + containerRect.height / 2
 
       const pageElements = this.shadowRoot.querySelectorAll('rm-pdf-page')
-      let currentPage = 1
+      let currentPage = null
 
       for (const pageElement of pageElements) {
         const rect = pageElement.getBoundingClientRect()
