@@ -1,7 +1,7 @@
 import { html } from 'lit'
-import * as pdfjsLib from 'pdfjs-dist'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-canvas.styles.js'
+import '../page/pdf-page.js'
 
 export default class PDFCanvas extends PDFViewerComponent {
   static get styles() {
@@ -10,13 +10,13 @@ export default class PDFCanvas extends PDFViewerComponent {
 
   static get properties() {
     return {
-      renderedPages: { type: Number, state: true }
+      pages: { type: Array, state: true }
     }
   }
 
   constructor() {
     super()
-    this.renderedPages = 0
+    this.pages = []
     this.isScrolling = false
     this.scrollTimeout = null
   }
@@ -28,8 +28,8 @@ export default class PDFCanvas extends PDFViewerComponent {
         changedProperties.get('context')?.scale !== this.context.scale
       )
 
-      if (needsRerender || this.renderedPages === 0) {
-        await this.renderAllPages()
+      if (needsRerender || this.pages.length === 0) {
+        await this.loadPages()
       }
     }
 
@@ -41,105 +41,36 @@ export default class PDFCanvas extends PDFViewerComponent {
     }
   }
 
-  async renderAllPages() {
+  async loadPages() {
     if (!this.context?.pdfDoc) return
 
-    const { pdfDoc, totalPages, scale } = this.context
-    const container = this.shadowRoot.querySelector('.canvas-container')
-    if (!container) return
-
-    container.innerHTML = ''
-
-    const devicePixelRatio = window.devicePixelRatio || 1
+    const { pdfDoc, totalPages } = this.context
+    const pages = []
 
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       try {
         const page = await pdfDoc.getPage(pageNum)
-        const viewport = page.getViewport({ scale })
-
-        const pageWrapper = document.createElement('div')
-        pageWrapper.className = 'page-wrapper'
-        pageWrapper.style.position = 'relative'
-        pageWrapper.style.width = `${viewport.width}px`
-        pageWrapper.style.height = `${viewport.height}px`
-
-        const canvas = document.createElement('canvas')
-        const canvasContext = canvas.getContext('2d')
-
-        canvas.height = viewport.height * devicePixelRatio
-        canvas.width = viewport.width * devicePixelRatio
-        canvas.style.width = `${viewport.width}px`
-        canvas.style.height = `${viewport.height}px`
-        canvas.dataset.pageNumber = pageNum
-
-        const scaledViewport = page.getViewport({ scale: scale * devicePixelRatio })
-
-        await page.render({
-          canvasContext,
-          viewport: scaledViewport
-        }).promise
-
-        const textLayerDiv = document.createElement('div')
-        textLayerDiv.className = 'textLayer'
-        textLayerDiv.style.width = `${viewport.width}px`
-        textLayerDiv.style.height = `${viewport.height}px`
-
-        pageWrapper.appendChild(canvas)
-        pageWrapper.appendChild(textLayerDiv)
-
-        await this.renderTextLayer(page, textLayerDiv, viewport)
-
-        container.appendChild(pageWrapper)
+        pages.push({ page, pageNumber: pageNum })
       } catch (error) {
-        console.error(`Error rendering page ${pageNum}:`, error)
+        console.error(`Error loading page ${pageNum}:`, error)
       }
     }
 
-    this.renderedPages = totalPages
+    this.pages = pages
   }
 
-  async renderTextLayer(page, textLayerDiv, viewport) {
-    try {
-      const textContent = await page.getTextContent()
-
-      textContent.items.forEach((textItem) => {
-        const tx = pdfjsLib.Util.transform(
-          viewport.transform,
-          textItem.transform
-        )
-
-        const fontSize = Math.sqrt((tx[2] * tx[2]) + (tx[3] * tx[3]))
-        const fontHeight = fontSize
-
-        const textDiv = document.createElement('div')
-        textDiv.style.position = 'absolute'
-        textDiv.style.left = `${tx[4]}px`
-        textDiv.style.top = `${tx[5] - fontHeight}px`
-        textDiv.style.fontSize = `${fontSize}px`
-        textDiv.style.fontFamily = textItem.fontName || 'sans-serif'
-
-        if (textItem.str.length > 0) {
-          const width = textItem.width * viewport.scale
-          textDiv.style.width = `${width}px`
-        }
-
-        textDiv.textContent = textItem.str
-
-        textLayerDiv.appendChild(textDiv)
-      })
-    } catch (error) {
-      console.error('Error rendering text layer:', error)
-    }
-  }
 
   scrollToPage(pageNum) {
     const container = this.shadowRoot.querySelector('.canvas-container')
-    const canvas = this.shadowRoot.querySelector(`canvas[data-page-number="${pageNum}"]`)
+    const pageElements = this.shadowRoot.querySelectorAll('pdf-page')
+    const targetPage = Array.from(pageElements).find(
+      el => el.pageNumber === pageNum
+    )
 
-    if (container && canvas) {
+    if (container && targetPage) {
       const containerTop = container.getBoundingClientRect().top
-      const canvasTop = canvas.getBoundingClientRect().top
-      const offset = canvasTop - containerTop + container.scrollTop - 32
+      const pageTop = targetPage.getBoundingClientRect().top
+      const offset = pageTop - containerTop + container.scrollTop - 32
 
       container.scrollTo({
         top: offset,
@@ -161,13 +92,13 @@ export default class PDFCanvas extends PDFViewerComponent {
       const containerRect = container.getBoundingClientRect()
       const centerY = containerRect.top + containerRect.height / 2
 
-      const canvases = this.shadowRoot.querySelectorAll('canvas')
+      const pageElements = this.shadowRoot.querySelectorAll('pdf-page')
       let currentPage = 1
 
-      for (const canvas of canvases) {
-        const rect = canvas.getBoundingClientRect()
+      for (const pageElement of pageElements) {
+        const rect = pageElement.getBoundingClientRect()
         if (rect.top <= centerY && rect.bottom >= centerY) {
-          currentPage = parseInt(canvas.dataset.pageNumber, 10)
+          currentPage = pageElement.pageNumber
           break
         }
       }
@@ -189,7 +120,15 @@ export default class PDFCanvas extends PDFViewerComponent {
 
   render() {
     return html`
-      <div class="canvas-container"></div>
+      <div class="canvas-container">
+        ${this.pages.map(({ page, pageNumber }) => html`
+          <pdf-page
+            .page=${page}
+            .scale=${this.context?.scale || 1}
+            .pageNumber=${pageNumber}>
+          </pdf-page>
+        `)}
+      </div>
     `
   }
 }
