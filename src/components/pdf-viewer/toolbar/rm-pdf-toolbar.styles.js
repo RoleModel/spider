@@ -1,18 +1,22 @@
 import { css } from 'lit'
 
 export default css`
+  @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
   :host {
     display: block;
+    font-family: 'Rubik', sans-serif;
+    font-size: 14px;
   }
 
   .toolbar {
-    padding: 1rem;
-    background: #f5f5f5;
+    padding: 8px;
+    background: #ffffff;
     border-bottom: 1px solid #ddd;
     display: flex;
     align-items: center;
-    gap: 1rem;
     flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   button {
@@ -22,6 +26,15 @@ export default css`
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
+  }
+
+  .btn--icon {
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
   }
 
   button:hover:not(:disabled) {
@@ -38,11 +51,16 @@ export default css`
     color: #333;
   }
 
-  .zoom-controls {
+  .toolbar__section {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+  
+  .toolbar__section-group {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-left: auto;
   }
 
   .zoom-level {
