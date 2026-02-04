@@ -219,7 +219,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/reactive-element@npm:^2.1.0":
+"@lit/context@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "@lit/context@npm:1.1.6"
+  dependencies:
+    "@lit/reactive-element": "npm:^1.6.2 || ^2.1.0"
+  checksum: 10c0/203f761eda19c8b37d77f01d9a0148535c5b28c47b76e28b321cb6e5ed0546c45332512e68b1647ce92ca67690d8c66de31972ec115410b080d69fa25a5d86f3
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^1.6.2 || ^2.1.0, @lit/reactive-element@npm:^2.1.0":
   version: 2.1.2
   resolution: "@lit/reactive-element@npm:2.1.2"
   dependencies:
@@ -1273,6 +1282,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "spider@workspace:."
   dependencies:
+    "@lit/context": "npm:^1.1.6"
     lit: "npm:^3.3.2"
     pdfjs-dist: "npm:^5.4.624"
     vite: "npm:^7.2.4"

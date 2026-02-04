@@ -1,5 +1,7 @@
 import { LitElement, html } from 'lit'
+import { consume } from '@lit/context'
 import styles from './pdf-thumbnail.styles.js'
+import { pdfContext } from '../pdf-context.js'
 
 export default class PDFThumbnail extends LitElement {
   static get properties() {
@@ -7,7 +9,8 @@ export default class PDFThumbnail extends LitElement {
       pageNumber: { type: Number },
       pdfDoc: { type: Object },
       scale: { type: Number },
-      isActive: { type: Boolean }
+      isActive: { type: Boolean },
+      _context: { type: Object, state: true }
     }
   }
 
@@ -21,6 +24,10 @@ export default class PDFThumbnail extends LitElement {
     this.pdfDoc = null
     this.scale = 0.3
     this.isActive = false
+    this._context = null
+    consume(this, pdfContext, (value) => {
+      this._context = value
+    })
   }
 
   async firstUpdated() {
@@ -59,11 +66,8 @@ export default class PDFThumbnail extends LitElement {
   }
 
   handleClick() {
-    this.dispatchEvent(new CustomEvent('thumbnail-click', {
-      detail: { pageNumber: this.pageNumber },
-      bubbles: true,
-      composed: true
-    }))
+    console.log('Thumbnail clicked:', this.pageNumber)
+    this._context?.setCurrentPage(this.pageNumber)
   }
 
   render() {

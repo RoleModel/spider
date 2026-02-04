@@ -1,19 +1,24 @@
 import { LitElement, html } from 'lit'
+import { ContextProvider } from '@lit/context'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
+import { pdfContext } from './pdf-context.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
 import './canvas/pdf-canvas.js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-const PDFContext = Symbol('pdf-context')
 
 export default class PDFViewer extends LitElement {
   static get properties() {
     return {
-      src: { type: String }
+      src: { type: String },
+      pdfDoc: { type: Object, state: true },
+      currentPage: { type: Number, state: true },
+      totalPages: { type: Number, state: true },
+      scale: { type: Number, state: true }
     }
   }
 
@@ -29,83 +34,65 @@ export default class PDFViewer extends LitElement {
     this.totalPages = 0
     this.scale = 1.5
 
-    this[PDFContext] = {
-      getPdfDoc: () => this.pdfDoc,
-      getCurrentPage: () => this.currentPage,
-      getTotalPages: () => this.totalPages,
-      getScale: () => this.scale,
+    this._provider = new ContextProvider(this, {
+      context: pdfContext,
+      initialValue: this._createContextValue()
+    })
+  }
+
+  _createContextValue() {
+    return {
+      pdfDoc: this.pdfDoc,
+      currentPage: this.currentPage,
+      totalPages: this.totalPages,
+      scale: this.scale,
       setCurrentPage: (page) => {
+        console.log('setCurrentPage', page)
         this.currentPage = page
-        this.requestUpdate()
-        this.dispatchEvent(new CustomEvent('page-change', {
-          detail: { pageNumber: page },
-          bubbles: true,
-          composed: true
-        }))
       },
       setScale: (scale) => {
         this.scale = scale
-        this.requestUpdate()
-        this.dispatchEvent(new CustomEvent('scale-change', {
-          detail: { scale },
-          bubbles: true,
-          composed: true
-        }))
       },
       nextPage: () => {
         if (this.currentPage < this.totalPages) {
           this.currentPage++
-          this.requestUpdate()
-          this.dispatchEvent(new CustomEvent('page-change', {
-            detail: { pageNumber: this.currentPage },
-            bubbles: true,
-            composed: true
-          }))
         }
       },
       previousPage: () => {
         if (this.currentPage > 1) {
           this.currentPage--
-          this.requestUpdate()
-          this.dispatchEvent(new CustomEvent('page-change', {
-            detail: { pageNumber: this.currentPage },
-            bubbles: true,
-            composed: true
-          }))
         }
       },
       zoomIn: () => {
         this.scale += 0.25
-        this.requestUpdate()
-        this.dispatchEvent(new CustomEvent('scale-change', {
-          detail: { scale: this.scale },
-          bubbles: true,
-          composed: true
-        }))
       },
       zoomOut: () => {
         if (this.scale > 0.5) {
           this.scale -= 0.25
-          this.requestUpdate()
-          this.dispatchEvent(new CustomEvent('scale-change', {
-            detail: { scale: this.scale },
-            bubbles: true,
-            composed: true
-          }))
         }
       }
+    }
+  }
+
+  updated(changedProperties) {
+    if (
+      changedProperties.has('pdfDoc') ||
+      changedProperties.has('currentPage') ||
+      changedProperties.has('totalPages') ||
+      changedProperties.has('scale')
+    ) {
+      console.log('setting value', this._createContextValue())
+      this._provider.setValue(this._createContextValue())
+    }
+
+    if (changedProperties.has('src') && this.src) {
+      this.loadPDF()
     }
   }
 
   async firstUpdated() {
     if (this.src) {
       await this.loadPDF()
-    }
-  }
-
-  updated(changedProperties) {
-    if (changedProperties.has('src') && this.src) {
-      this.loadPDF()
     }
   }
 
@@ -117,22 +104,8 @@ export default class PDFViewer extends LitElement {
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
       this.currentPage = 1
-      this.requestUpdate()
-      this.dispatchEvent(new CustomEvent('pdf-loaded', {
-        detail: {
-          totalPages: this.totalPages,
-          pdfDoc: this.pdfDoc
-        },
-        bubbles: true,
-        composed: true
-      }))
     } catch (error) {
       console.error('Error loading PDF:', error)
-      this.dispatchEvent(new CustomEvent('pdf-error', {
-        detail: { error },
-        bubbles: true,
-        composed: true
-      }))
     }
   }
 
@@ -151,4 +124,3 @@ export default class PDFViewer extends LitElement {
 
 customElements.define('pdf-viewer', PDFViewer)
 
-export { PDFContext }
