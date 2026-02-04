@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Viewer - Theme Customization Demo</title>
+    <script type="module" src="/src/components/pdf-viewer/rm-pdf-viewer.js"></script>
+    <link rel="stylesheet" href="/src/assets/application.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      .theme-controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .theme-controls h2 {
+        margin-top: 0;
+      }
+
+      .control-group {
+        margin-bottom: 15px;
+      }
+
+      .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .control-group input[type="range"] {
+        width: 300px;
+      }
+
+      .control-group .value-display {
+        display: inline-block;
+        margin-left: 10px;
+        font-weight: bold;
+        min-width: 40px;
+      }
+
+      .theme-presets {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .theme-presets button {
+        padding: 8px 16px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+
+      .theme-presets button:hover {
+        border-color: #999;
+      }
+
+      .viewer-container {
+        height: calc(100vh - 200px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="theme-controls">
+      <h2>Theme Customization</h2>
+      <div class="control-group">
+        <label>
+          Hue (0-360):
+          <span class="value-display" id="hue-value">217</span>
+        </label>
+        <input type="range" id="hue-slider" min="0" max="360" value="217" />
+      </div>
+      <div class="control-group">
+        <label>
+          Saturation (0-100):
+          <span class="value-display" id="sat-value">89</span>
+        </label>
+        <input type="range" id="sat-slider" min="0" max="100" value="89" />
+      </div>
+      <div class="theme-presets">
+        <button onclick="setTheme(217, 89)">Blue (Default)</button>
+        <button onclick="setTheme(142, 76)">Green</button>
+        <button onclick="setTheme(271, 76)">Purple</button>
+        <button onclick="setTheme(4, 90)">Red</button>
+        <button onclick="setTheme(38, 92)">Orange</button>
+        <button onclick="setTheme(191, 97)">Cyan</button>
+      </div>
+    </div>
+
+    <div class="viewer-container">
+      <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89"></rm-pdf-viewer>
+    </div>
+
+    <script>
+      const viewer = document.getElementById('viewer')
+      const hueSlider = document.getElementById('hue-slider')
+      const satSlider = document.getElementById('sat-slider')
+      const hueValue = document.getElementById('hue-value')
+      const satValue = document.getElementById('sat-value')
+
+      function updateTheme() {
+        const hue = hueSlider.value
+        const sat = satSlider.value
+        viewer.setAttribute('theme-hue', hue)
+        viewer.setAttribute('theme-saturation', sat)
+        hueValue.textContent = hue
+        satValue.textContent = sat
+      }
+
+      hueSlider.addEventListener('input', updateTheme)
+      satSlider.addEventListener('input', updateTheme)
+
+      window.setTheme = function(hue, sat) {
+        hueSlider.value = hue
+        satSlider.value = sat
+        updateTheme()
+      }
+    </script>
+  </body>
+</html>
