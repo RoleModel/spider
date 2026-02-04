@@ -50,6 +50,8 @@ export default class PDFCanvas extends PDFViewerComponent {
 
     container.innerHTML = ''
 
+    const devicePixelRatio = window.devicePixelRatio || 1
+
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       try {
         const page = await pdfDoc.getPage(pageNum)
@@ -64,13 +66,17 @@ export default class PDFCanvas extends PDFViewerComponent {
         const canvas = document.createElement('canvas')
         const canvasContext = canvas.getContext('2d')
 
-        canvas.height = viewport.height
-        canvas.width = viewport.width
+        canvas.height = viewport.height * devicePixelRatio
+        canvas.width = viewport.width * devicePixelRatio
+        canvas.style.width = `${viewport.width}px`
+        canvas.style.height = `${viewport.height}px`
         canvas.dataset.pageNumber = pageNum
+
+        const scaledViewport = page.getViewport({ scale: scale * devicePixelRatio })
 
         await page.render({
           canvasContext,
-          viewport
+          viewport: scaledViewport
         }).promise
 
         const textLayerDiv = document.createElement('div')
