@@ -17,6 +17,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
     super()
     this.pageNumber = 1
     this.scale = 0.3
+    this._renderTask = null
   }
 
   async firstUpdated() {
@@ -25,6 +26,8 @@ export default class PDFThumbnail extends PDFViewerComponent {
 
   async renderThumbnail() {
     if (!this.context?.pdfDoc) return
+
+    this.#cancelRenderTask()
 
     const pdfDoc = this.context.pdfDoc
 
@@ -44,14 +47,20 @@ export default class PDFThumbnail extends PDFViewerComponent {
         viewport: viewport
       }
 
-      await page.render(renderContext).promise
+      this._renderTask = page.render(renderContext)
+      await this._renderTask.promise
+      this._renderTask = null
     } catch (error) {
       console.error('Error rendering thumbnail:', error)
     }
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    this.#cancelRenderTask()
+  }
+
   handleClick() {
-    console.log('Thumbnail clicked:', this.pageNumber)
     this.context?.setCurrentPage(this.pageNumber)
   }
 
@@ -67,6 +76,13 @@ export default class PDFThumbnail extends PDFViewerComponent {
         <div class="page-label">${this.pageNumber}</div>
       </div>
     `
+  }
+
+  #cancelRenderTask() {
+    if (this._renderTask) {
+      this._renderTask.cancel()
+      this._renderTask = null
+    }
   }
 }
 

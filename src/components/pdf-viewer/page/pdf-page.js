@@ -20,6 +20,7 @@ export default class PDFPage extends LitElement {
     this.page = null
     this.scale = 1
     this.pageNumber = 1
+    this._renderTask = null
   }
 
   async updated(changedProperties) {
@@ -30,6 +31,8 @@ export default class PDFPage extends LitElement {
 
   async renderPage() {
     if (!this.page) return
+
+    this.#cancelRenderTask()
 
     const viewport = this.page.getViewport({ scale: this.scale })
     const devicePixelRatio = window.devicePixelRatio || 1
@@ -50,10 +53,13 @@ export default class PDFPage extends LitElement {
 
     const scaledViewport = this.page.getViewport({ scale: this.scale * devicePixelRatio })
 
-    await this.page.render({
+    this._renderTask = this.page.render({
       canvasContext,
       viewport: scaledViewport
-    }).promise
+    })
+
+    await this._renderTask.promise
+    this._renderTask = null
 
     const textLayerDiv = this.shadowRoot.querySelector('.textLayer')
     textLayerDiv.style.width = `${viewport.width}px`
@@ -97,6 +103,11 @@ export default class PDFPage extends LitElement {
     }
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    this.#cancelRenderTask()
+  }
+
   render() {
     return html`
       <div class="page-wrapper">
@@ -104,6 +115,13 @@ export default class PDFPage extends LitElement {
         <div class="textLayer"></div>
       </div>
     `
+  }
+
+  #cancelRenderTask() {
+    if (this._renderTask) {
+      this._renderTask.cancel()
+      this._renderTask = null
+    }
   }
 }
 
