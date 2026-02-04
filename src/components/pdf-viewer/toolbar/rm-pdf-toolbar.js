@@ -44,6 +44,19 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.toggleSidebar()
   }
 
+  handlePageInput(e) {
+    const value = parseInt(e.target.value, 10)
+    if (!isNaN(value) && value >= 1 && value <= this.context.totalPages) {
+      this.context?.setCurrentPage(value)
+    }
+  }
+
+  handlePageKeydown(e) {
+    if (e.key === 'Enter') {
+      e.target.blur()
+    }
+  }
+
   render() {
     if (!this.context) return html``
 
@@ -62,7 +75,15 @@ export default class PDFToolbar extends PDFViewerComponent {
               <img src=${arrowLeftIcon} alt="Previous" />
             </button>
             <span class="page-info">
-              Page ${currentPage} of ${totalPages}
+              <input 
+                type="number" 
+                class="page-input" 
+                .value="${currentPage}"
+                @change="${this.handlePageInput}"
+                @keydown="${this.handlePageKeydown}"
+                min="1" 
+                max="${totalPages}"
+              /> of ${totalPages}
             </span>
             <button class="btn--icon" @click="${this.nextPage}" ?disabled="${currentPage >= totalPages}">
               <img src=${arrowRightIcon} alt="Next" />

@@ -72,12 +72,43 @@ export default css`
     color: #333;
   }
 
+  .page-input {
+    width: 1rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background-color: #fafafa;
+
+    &:hover {
+      background-color: #f3f3f3;
+    }
+  }
+
+  .page-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    font-weight: bold;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   .toolbar__section {
     display: flex;
     align-items: center;
     gap: 3rem;
   }
-  
+
   .toolbar__section-group {
     display: flex;
     align-items: center;
