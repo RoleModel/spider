@@ -34,10 +34,6 @@ export default css`
     border: none;
   }
 
-  .sidebar-toggle {
-    position: relative;
-  }
-
   .sidebar-toggle img {
     transition: opacity 0.3s ease, transform 0.3s ease;
   }

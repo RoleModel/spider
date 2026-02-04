@@ -26,6 +26,8 @@ export default css`
     gap: 1rem;
     opacity: 1;
     transition: opacity 0.2s ease;
+    height: calc(100vh - 81px);
+    overflow-y: auto;
   }
 
   .sidebar.collapsed .thumbnails-container {

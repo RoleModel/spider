@@ -8,7 +8,7 @@ export default css`
 
   .thumbnail-container {
     padding: 8px;
-    border: 2px solid transparent;
+    border: 2px solid #efefef;
     border-radius: 4px;
     transition: all 0.2s ease;
     background: white;
