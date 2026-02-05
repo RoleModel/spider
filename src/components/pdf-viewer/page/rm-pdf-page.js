@@ -42,7 +42,7 @@ export default class PDFPage extends LitElement {
   async renderPage() {
     if (!this.page) return
 
-    this.#cancelRenderTask()
+    this._cancelRenderTask()
 
     const viewport = this.page.getViewport({ scale: this.scale })
     const devicePixelRatio = window.devicePixelRatio || 1
@@ -111,8 +111,9 @@ export default class PDFPage extends LitElement {
           textDiv.style.width = `${width}px`
         }
 
-        if (this.searchTerm && textItem.str.includes(this.searchTerm)) {
-          this.highlightText(textDiv, textItem.str, this.searchTerm)
+        const normalizedText = this._normalizeText(textItem.str)
+        if (this.searchTerm && normalizedText.includes(this.searchTerm)) {
+          this.highlightText(textDiv, normalizedText, this.searchTerm)
         } else {
           textDiv.textContent = textItem.str
         }
@@ -145,7 +146,7 @@ export default class PDFPage extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    this.#cancelRenderTask()
+    this._cancelRenderTask()
   }
 
   render() {
@@ -157,11 +158,17 @@ export default class PDFPage extends LitElement {
     `
   }
 
-  #cancelRenderTask() {
+  _cancelRenderTask() {
     if (this._renderTask) {
       this._renderTask.cancel()
       this._renderTask = null
     }
+  }
+
+  _normalizeText(text) {
+    return text
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
   }
 }
 
