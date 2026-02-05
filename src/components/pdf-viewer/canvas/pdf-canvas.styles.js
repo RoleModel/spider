@@ -17,4 +17,10 @@ export default css`
     background: var(--theme-neutral-100, #f3f3f3);
     gap: var(--theme-spacing-md, 1rem);
   }
+
+  @media (max-width: 512px) {
+    .canvas-container {
+      align-items: flex-start;
+    }
+  }
 `

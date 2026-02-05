@@ -144,14 +144,6 @@ export default css`
   }
 
   @media (max-width: 512px) {
-    .page-info {
-      font-size: var(--theme-font-size-sm, 12px);
-    }
-
-    .page-input {
-      font-size: var(--theme-font-size-sm, 12px);
-    }
-
     .toolbar__section {
       gap: var(--theme-spacing-sm, 0.5rem);
     }
@@ -162,10 +154,6 @@ export default css`
 
     .btn--download {
       display: none;
-    }
-
-    .btn--icon img {
-      width: var(--theme-icon-size-lg, 18px);
     }
   }
 `
