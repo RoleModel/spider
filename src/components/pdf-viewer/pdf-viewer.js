@@ -4,7 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
-import { updateThemeColors } from './theme-config.js'
+import { createThemeStyleSheet } from './theme-config.js'
 import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
@@ -30,6 +30,7 @@ export default class PDFViewer extends LitElement {
       searchMatches: { type: Array, state: true },
       currentMatchIndex: { type: Number, state: true },
       error: { type: Object, state: true }
+      themeStyleSheet: { type: Object, state: true }
     }
   }
 
@@ -54,6 +55,7 @@ export default class PDFViewer extends LitElement {
     this.searchMatches = []
     this.currentMatchIndex = -1
     this.error = null
+    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -226,7 +228,11 @@ export default class PDFViewer extends LitElement {
   }
 
   _updateThemeColors() {
-    updateThemeColors(this, this.themeHue, this.themeSaturation)
+    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
+    this.shadowRoot.adoptedStyleSheets = [
+      ...this.constructor.elementStyles.map(s => s.styleSheet),
+      this.themeStyleSheet
+    ]
   }
 
   async firstUpdated() {
@@ -257,6 +263,10 @@ export default class PDFViewer extends LitElement {
         name: error.name || 'PDFError'
       }
     }
+  }
+
+  _handleRetry() {
+    this.loadPDF()
   }
 
   async performSearch(term) {
@@ -360,10 +370,6 @@ export default class PDFViewer extends LitElement {
         </div>
       </div>
     `
-  }
-
-  _handleRetry() {
-    this.loadPDF()
   }
 }
 

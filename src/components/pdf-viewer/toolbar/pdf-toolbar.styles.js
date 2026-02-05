@@ -20,7 +20,7 @@ export default css`
   button {
     padding: var(--theme-spacing-sm, 0.5rem) var(--theme-spacing-md, 1rem);
     border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
-    background: white;
+    background: var(--theme-neutral-50);
     border-radius: var(--theme-border-radius-md, 4px);
     cursor: pointer;
     font-size: var(--theme-font-size-base, 0.9rem);
@@ -36,9 +36,11 @@ export default css`
     justify-content: center;
     background: transparent;
     border: none;
+    color: var(--theme-icon-color);
 
-    img {
-      width: var(--theme-icon-size-xl, 18px);
+    svg {
+      width: var(--theme-icon-size-lg, 18px);
+      height: var(--theme-icon-size-lg, 18px);
     }
   }
 
@@ -107,8 +109,11 @@ export default css`
   }
 
   .search-info {
+    min-width: 4rem;
+    text-align: center;
     font-weight: 500;
     color: var(--theme-neutral-500, #333);
+    font-size: var(--theme-font-size-sm, 12px);
   }
 
   .search-dropdown {
