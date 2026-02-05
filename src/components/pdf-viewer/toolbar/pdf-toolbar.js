@@ -56,7 +56,12 @@ export default class PDFToolbar extends PDFViewerComponent {
 
   toggleSearch() {
     this.searchOpen = !this.searchOpen
-    if (!this.searchOpen) this._clearSearch()
+
+    if (this.searchOpen) {
+      this._focusSearchInput()
+    } else {
+      this._clearSearch()
+    }
   }
 
   closeSearch() {
@@ -90,6 +95,8 @@ export default class PDFToolbar extends PDFViewerComponent {
   handleSearchKeydown(e) {
     if (e.key === 'Enter') {
       this.context?.nextMatch()
+    } else if (e.key === 'Escape') {
+      this.closeSearch()
     }
   }
 
@@ -190,6 +197,11 @@ export default class PDFToolbar extends PDFViewerComponent {
         </div>
       </div>
     `
+  }
+
+  _focusSearchInput() {
+    const searchInput = this.shadowRoot.getElementById('search-input')
+    if (searchInput) setTimeout(() => searchInput.focus(), 100)
   }
 
   _clearSearch() {
