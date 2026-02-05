@@ -257,7 +257,8 @@ export default class PDFViewer extends LitElement {
           pageText += item.str
         })
 
-        let index = pageText.indexOf(term)
+        const normalizedPageText = this._normalizeText(pageText)
+        let index = normalizedPageText.indexOf(term)
 
         while (index !== -1) {
           matches.push({
@@ -310,6 +311,12 @@ export default class PDFViewer extends LitElement {
         </div>
       </div>
     `
+  }
+
+  _normalizeText(text) {
+    return text
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
   }
 }
 
