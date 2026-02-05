@@ -10,10 +10,22 @@ import printIcon from '../../../assets/icons/print.svg'
 import downloadIcon from '../../../assets/icons/download.svg'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg'
+import searchIcon from '../../../assets/icons/search.svg'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
     return styles
+  }
+
+  static get properties() {
+    return {
+      searchOpen: { type: Boolean, state: true }
+    }
+  }
+
+  constructor() {
+    super()
+    this.searchOpen = false
   }
 
   previousPage() {
@@ -42,6 +54,21 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.download()
   }
 
+  toggleSearch() {
+    this.searchOpen = !this.searchOpen
+
+    if (this.searchOpen) {
+      this._focusSearchInput()
+    } else {
+      this._clearSearch()
+    }
+  }
+
+  closeSearch() {
+    this.searchOpen = false
+    this._clearSearch()
+  }
+
   toggleSidebar() {
     this.context?.toggleSidebar()
   }
@@ -60,10 +87,34 @@ export default class PDFToolbar extends PDFViewerComponent {
     }
   }
 
+  handleSearchInput(e) {
+    const term = e.target.value
+    this.context?.search(term)
+  }
+
+  handleSearchKeydown(e) {
+    if (e.key === 'Enter') {
+      this.context?.nextMatch()
+    } else if (e.key === 'Escape') {
+      this.closeSearch()
+    }
+  }
+
+  nextSearchMatch() {
+    this.context?.nextMatch()
+  }
+
+  previousSearchMatch() {
+    this.context?.previousMatch()
+  }
+
   render() {
     if (!this.context) return html``
 
-    const { currentPage, totalPages, scale, sidebarCollapsed } = this.context
+    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex } = this.context
+
+    const matchCount = searchMatches?.length || 0
+    const matchDisplay = matchCount > 0 ? `${currentMatchIndex + 1} of ${matchCount}` : '0 of 0'
 
     return html`
       <div class="toolbar">
@@ -113,11 +164,52 @@ export default class PDFToolbar extends PDFViewerComponent {
           </div>
         </div>
 
-        <button class="btn--icon" @click="">
-          <img src=${closeIcon} alt="Close" title="Close" />
-        </button>
+        <div class="toolbar__section">
+          <button class="btn--icon" @click="${this.toggleSearch}">
+            <img src=${searchIcon} alt="Search" title="Search" />
+          </button>
+
+          <button class="btn--icon" @click="">
+            <img src=${closeIcon} alt="Close" title="Close" />
+          </button>
+        </div>
+
+        <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
+          <input
+            id="search-input"
+            type="text"
+            class="search-dropdown__input"
+            placeholder="Search in document..."
+            @input="${this.handleSearchInput}"
+            @keydown="${this.handleSearchKeydown}"
+            @click="${(e) => e.stopPropagation()}"
+          />
+          <span class="search-info">${matchDisplay}</span>
+          <button class="btn--icon" @click="${this.previousSearchMatch}" ?disabled="${matchCount === 0}">
+            <img src=${arrowLeftIcon} alt="Previous Match" title="Previous Match" />
+          </button>
+          <button class="btn--icon" @click="${this.nextSearchMatch}" ?disabled="${matchCount === 0}">
+            <img src=${arrowRightIcon} alt="Next Match" title="Next Match" />
+          </button>
+          <button class="btn--icon" @click="${this.closeSearch}">
+            <img src=${closeIcon} alt="Close" title="Close" />
+          </button>
+        </div>
       </div>
     `
+  }
+
+  _focusSearchInput() {
+    const searchInput = this.shadowRoot.getElementById('search-input')
+    if (searchInput) setTimeout(() => searchInput.focus(), 100)
+  }
+
+  _clearSearch() {
+    const searchInput = this.shadowRoot.getElementById('search-input')
+    if (searchInput) {
+      searchInput.value = ''
+      this.context?.search('')
+    }
   }
 }
 

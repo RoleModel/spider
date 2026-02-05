@@ -27,7 +27,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
   async renderThumbnail() {
     if (!this.context?.pdfDoc) return
 
-    this.#cancelRenderTask()
+    this._cancelRenderTask()
 
     const pdfDoc = this.context.pdfDoc
 
@@ -60,7 +60,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    this.#cancelRenderTask()
+    this._cancelRenderTask()
   }
 
   handleClick() {
@@ -82,7 +82,7 @@ export default class PDFThumbnail extends PDFViewerComponent {
     `
   }
 
-  #cancelRenderTask() {
+  _cancelRenderTask() {
     if (this._renderTask) {
       this._renderTask.cancel()
       this._renderTask = null

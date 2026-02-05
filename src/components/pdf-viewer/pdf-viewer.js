@@ -5,6 +5,7 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
 import { updateThemeColors } from './theme-config.js'
+import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
 import './canvas/pdf-canvas.js'
@@ -22,7 +23,10 @@ export default class PDFViewer extends LitElement {
       totalPages: { type: Number, state: true },
       scale: { type: Number, state: true },
       sidebarCollapsed: { type: Boolean, state: true },
-      shouldScroll: { type: Boolean, state: true }
+      shouldScroll: { type: Boolean, state: true },
+      searchTerm: { type: String, state: true },
+      searchMatches: { type: Array, state: true },
+      currentMatchIndex: { type: Number, state: true }
     }
   }
 
@@ -41,6 +45,9 @@ export default class PDFViewer extends LitElement {
     this.scale = 1.5
     this.sidebarCollapsed = false
     this.shouldScroll = false
+    this.searchTerm = ''
+    this.searchMatches = []
+    this.currentMatchIndex = -1
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -56,6 +63,9 @@ export default class PDFViewer extends LitElement {
       scale: this.scale,
       sidebarCollapsed: this.sidebarCollapsed,
       shouldScroll: this.shouldScroll,
+      searchTerm: this.searchTerm,
+      searchMatches: this.searchMatches,
+      currentMatchIndex: this.currentMatchIndex,
       setCurrentPage: (page) => {
         this.currentPage = page
       },
@@ -91,6 +101,15 @@ export default class PDFViewer extends LitElement {
       },
       toggleSidebar: () => {
         this.sidebarCollapsed = !this.sidebarCollapsed
+      },
+      search: async (term) => {
+        await this.performSearch(term)
+      },
+      nextMatch: () => {
+        this.goToNextMatch()
+      },
+      previousMatch: () => {
+        this.goToPreviousMatch()
       }
     }
   }
@@ -172,7 +191,11 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('currentPage') ||
       changedProperties.has('totalPages') ||
       changedProperties.has('scale') ||
-      changedProperties.has('sidebarCollapsed')
+      changedProperties.has('sidebarCollapsed') ||
+      changedProperties.has('shouldScroll') ||
+      changedProperties.has('searchTerm') ||
+      changedProperties.has('searchMatches') ||
+      changedProperties.has('currentMatchIndex')
     ) {
       this._provider.setValue(this._createContextValue())
     }
@@ -208,6 +231,75 @@ export default class PDFViewer extends LitElement {
     } catch (error) {
       console.error('Error loading PDF:', error)
     }
+  }
+
+  async performSearch(term) {
+    this.searchTerm = term
+    this.searchMatches = []
+    this.currentMatchIndex = -1
+
+    if (!term || !this.pdfDoc) return
+
+    const matches = []
+
+    for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
+      try {
+        const page = await this.pdfDoc.getPage(pageNum)
+        const textContent = await page.getTextContent()
+
+        let pageText = ''
+        const items = []
+
+        textContent.items.forEach((item) => {
+          const normalizedText = normalizeText(item.str)
+          items.push({
+            text: normalizedText,
+            index: pageText.length
+          })
+          pageText += normalizedText
+        })
+
+        let index = pageText.indexOf(term)
+
+        while (index !== -1) {
+          matches.push({
+            pageNum,
+            charIndex: index,
+            text: term
+          })
+          index = pageText.indexOf(term, index + 1)
+        }
+      } catch (error) {
+        console.error(`Error searching page ${pageNum}:`, error)
+      }
+    }
+
+    this.searchMatches = matches
+    if (matches.length > 0) {
+      this.currentMatchIndex = 0
+      this.shouldScroll = true
+      this.currentPage = matches[0].pageNum
+    }
+  }
+
+  goToNextMatch() {
+    if (this.searchMatches.length === 0) return
+
+    this.currentMatchIndex = (this.currentMatchIndex + 1) % this.searchMatches.length
+    const match = this.searchMatches[this.currentMatchIndex]
+    this.shouldScroll = true
+    this.currentPage = match.pageNum
+  }
+
+  goToPreviousMatch() {
+    if (this.searchMatches.length === 0) return
+
+    this.currentMatchIndex = this.currentMatchIndex <= 0
+      ? this.searchMatches.length - 1
+      : this.currentMatchIndex - 1
+    const match = this.searchMatches[this.currentMatchIndex]
+    this.shouldScroll = true
+    this.currentPage = match.pageNum
   }
 
   render() {
