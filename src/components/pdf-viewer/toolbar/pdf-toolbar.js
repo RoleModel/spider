@@ -10,10 +10,22 @@ import printIcon from '../../../assets/icons/print.svg'
 import downloadIcon from '../../../assets/icons/download.svg'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg'
+import searchIcon from '../../../assets/icons/search.svg'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
     return styles
+  }
+
+  static get properties() {
+    return {
+      searchOpen: { type: Boolean, state: true }
+    }
+  }
+
+  constructor() {
+    super()
+    this.searchOpen = false
   }
 
   previousPage() {
@@ -40,6 +52,14 @@ export default class PDFToolbar extends PDFViewerComponent {
 
   download() {
     this.context?.download()
+  }
+
+  toggleSearch() {
+    this.searchOpen = !this.searchOpen
+  }
+
+  closeSearch() {
+    this.searchOpen = false
   }
 
   toggleSidebar() {
@@ -113,9 +133,35 @@ export default class PDFToolbar extends PDFViewerComponent {
           </div>
         </div>
 
-        <button class="btn--icon" @click="">
-          <img src=${closeIcon} alt="Close" title="Close" />
-        </button>
+        <div class="toolbar__section">
+          <button class="btn--icon" @click="${this.toggleSearch}">
+            <img src=${searchIcon} alt="Search" title="Search" />
+          </button>
+
+          <button class="btn--icon" @click="">
+            <img src=${closeIcon} alt="Close" title="Close" />
+          </button>
+        </div>
+
+        <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
+          <input
+            id="search-input"
+            type="text"
+            class="search-dropdown__input"
+            placeholder="Search in document..."
+            @click="${(e) => e.stopPropagation()}"
+          />
+          <span class="search-info">1 of 10</span>
+          <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
+            <img src=${arrowLeftIcon} alt="Previous" title="Previous" />
+          </button>
+          <button class="btn--icon" @click="${this.nextPage}" ?disabled="${currentPage >= totalPages}">
+            <img src=${arrowRightIcon} alt="Next" title="Next" />
+          </button>
+          <button class="btn--icon" @click="${this.closeSearch}">
+            <img src=${closeIcon} alt="Close" title="Close" />
+          </button>
+        </div>
       </div>
     `
   }
