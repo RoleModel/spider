@@ -24,6 +24,9 @@ export default css`
     border-radius: var(--theme-border-radius-md, 4px);
     cursor: pointer;
     font-size: var(--theme-font-size-base, 0.9rem);
+    &:hover {
+      box-shadow: 0 0 0 2px var(--theme-border);
+    }
   }
 
   .btn--icon {
@@ -33,26 +36,6 @@ export default css`
     justify-content: center;
     background: transparent;
     border: none;
-  }
-
-  .sidebar-toggle img {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .sidebar-toggle .icon-open {
-    display: none;
-  }
-
-  .sidebar-toggle .icon-close {
-    display: block;
-  }
-
-  .sidebar-toggle.collapsed .icon-open {
-    display: block;
-  }
-
-  .sidebar-toggle.collapsed .icon-close {
-    display: none;
   }
 
   button:hover:not(:disabled) {
@@ -103,7 +86,13 @@ export default css`
   .toolbar__section {
     display: flex;
     align-items: center;
-    gap: var(--theme-spacing-xl, 3rem);
+    gap: var(--theme-spacing-sm);
+  }
+
+  .toolbar__section--center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .toolbar__section-group {
@@ -127,7 +116,7 @@ export default css`
   .search-dropdown {
     position: absolute;
     top: 100%;
-    right: var(--theme-spacing-sm, 0.5rem);
+    left: var(--theme-spacing-sm, 0.5rem);
     display: flex;
     align-items: center;
     gap: var(--theme-spacing-sm, 0.5rem);

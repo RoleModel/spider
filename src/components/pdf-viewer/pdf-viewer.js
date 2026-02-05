@@ -16,6 +16,7 @@ export default class PDFViewer extends LitElement {
   static get properties() {
     return {
       src: { type: String },
+      open: { type: Boolean, reflect: true },
       themeHue: { type: Number, attribute: 'theme-hue' },
       themeSaturation: { type: Number, attribute: 'theme-saturation' },
       pdfDoc: { type: Object, state: true },
@@ -37,6 +38,7 @@ export default class PDFViewer extends LitElement {
   constructor() {
     super()
     this.src = ''
+    this.open = false
     this.themeHue = 217
     this.themeSaturation = 89
     this.pdfDoc = null
@@ -66,6 +68,7 @@ export default class PDFViewer extends LitElement {
       searchTerm: this.searchTerm,
       searchMatches: this.searchMatches,
       currentMatchIndex: this.currentMatchIndex,
+      open: this.open,
       setCurrentPage: (page) => {
         this.currentPage = page
       },
@@ -110,6 +113,9 @@ export default class PDFViewer extends LitElement {
       },
       previousMatch: () => {
         this.goToPreviousMatch()
+      },
+      close: () => {
+        this.open = false
       }
     }
   }
@@ -195,7 +201,8 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('shouldScroll') ||
       changedProperties.has('searchTerm') ||
       changedProperties.has('searchMatches') ||
-      changedProperties.has('currentMatchIndex')
+      changedProperties.has('currentMatchIndex') ||
+      changedProperties.has('open')
     ) {
       this._provider.setValue(this._createContextValue())
     }
@@ -204,7 +211,12 @@ export default class PDFViewer extends LitElement {
       this._updateThemeColors()
     }
 
-    if (changedProperties.has('src') && this.src) {
+    if (changedProperties.has('src') && this.src && this.open) {
+      await this.loadPDF()
+    }
+
+    if (changedProperties.has('open') && this.open && this.src && !this.pdfDoc) {
+      console.log('loading')
       await this.loadPDF()
     }
   }
@@ -215,9 +227,6 @@ export default class PDFViewer extends LitElement {
 
   async firstUpdated() {
     this._updateThemeColors()
-    if (this.src) {
-      await this.loadPDF()
-    }
   }
 
   async loadPDF() {

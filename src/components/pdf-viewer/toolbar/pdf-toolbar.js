@@ -2,15 +2,13 @@ import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-toolbar.styles.js'
 import closeIcon from '../../../assets/icons/close.svg'
-import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg'
-import openSidebarIcon from '../../../assets/icons/open-sidebar.svg'
 import arrowLeftIcon from '../../../assets/icons/arrow-left.svg'
 import arrowRightIcon from '../../../assets/icons/arrow-right.svg'
-import printIcon from '../../../assets/icons/print.svg'
-import downloadIcon from '../../../assets/icons/download.svg'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg'
 import searchIcon from '../../../assets/icons/search.svg'
+import printIcon from '../../../assets/icons/print.svg'
+import downloadIcon from '../../../assets/icons/download.svg'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
@@ -46,14 +44,6 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.zoomOut()
   }
 
-  print() {
-    this.context?.print()
-  }
-
-  download() {
-    this.context?.download()
-  }
-
   toggleSearch() {
     this.searchOpen = !this.searchOpen
 
@@ -71,6 +61,10 @@ export default class PDFToolbar extends PDFViewerComponent {
 
   toggleSidebar() {
     this.context?.toggleSidebar()
+  }
+
+  close() {
+    this.context?.close()
   }
 
   handlePageInput(e) {
@@ -119,9 +113,8 @@ export default class PDFToolbar extends PDFViewerComponent {
     return html`
       <div class="toolbar">
         <div class="toolbar__section">
-          <button class="btn--icon sidebar-toggle ${sidebarCollapsed ? 'collapsed' : ''}" @click="${this.toggleSidebar}">
-            <img src=${openSidebarIcon} alt="Toggle Sidebar" title="Toggle Sidebar" class="icon-open" />
-            <img src=${closeSidebarIcon} alt="Toggle Sidebar" title="Toggle Sidebar" class="icon-close" />
+          <button class="btn--icon" @click="${this.toggleSearch}">
+            <img src=${searchIcon} alt="Search" title="Search" />
           </button>
 
           <div class="toolbar__section-group">
@@ -143,7 +136,9 @@ export default class PDFToolbar extends PDFViewerComponent {
               <img src=${arrowRightIcon} alt="Next" title="Next" />
             </button>
           </div>
+        </div>
 
+        <div class="toolbar__section toolbar__section--center">
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.zoomOut}" ?disabled="${scale <= 0.5}">
               <img src=${zoomOutIcon} alt="Zoom Out" title="Zoom Out" />
@@ -153,23 +148,17 @@ export default class PDFToolbar extends PDFViewerComponent {
               <img src=${zoomInIcon} alt="Zoom In" title="Zoom In" />
             </button>
           </div>
-
-          <div class="toolbar__section-group">
-            <button class="btn--icon" @click="${this.print}">
-              <img src=${printIcon} alt="Print" title="Print" />
-            </button>
-            <button class="btn--icon" @click="${this.download}">
-              <img src=${downloadIcon} alt="Download" title="Download" />
-            </button>
-          </div>
         </div>
 
         <div class="toolbar__section">
-          <button class="btn--icon" @click="${this.toggleSearch}">
-            <img src=${searchIcon} alt="Search" title="Search" />
+          <button class="btn--icon" @click="${this.print}" title="Print">
+            <img src=${printIcon} alt="Print" />
+          </button>
+          <button class="btn--icon" @click="${this.download}" title="Download">
+            <img src=${downloadIcon} alt="Download" />
           </button>
 
-          <button class="btn--icon" @click="">
+          <button class="btn--icon" @click="${this.close}">
             <img src=${closeIcon} alt="Close" title="Close" />
           </button>
         </div>
