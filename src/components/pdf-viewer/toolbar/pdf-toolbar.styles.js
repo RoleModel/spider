@@ -36,6 +36,10 @@ export default css`
     justify-content: center;
     background: transparent;
     border: none;
+
+    img {
+      width: var(--theme-icon-size-xl, 18px);
+    }
   }
 
   button:hover:not(:disabled) {
@@ -50,6 +54,7 @@ export default css`
   .page-info {
     font-weight: 500;
     color: var(--theme-neutral-500, #333);
+    font-size: var(--theme-font-size-sm, 12px);
   }
 
   .page-input {
@@ -58,7 +63,7 @@ export default css`
     border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
     border-radius: var(--theme-border-radius-md, 4px);
     padding: var(--theme-spacing-xs, 0.25rem);
-    font-size: var(--theme-font-size-base, 0.9rem);
+    font-size: var(--theme-font-size-sm, 12px);
     background-color: var(--theme-neutral-50, #fafafa);
 
     &:hover {
