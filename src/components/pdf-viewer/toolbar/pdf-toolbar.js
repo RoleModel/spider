@@ -9,6 +9,8 @@ import zoomInIcon from '../../../assets/icons/zoom-in.svg'
 import searchIcon from '../../../assets/icons/search.svg'
 import printIcon from '../../../assets/icons/print.svg'
 import downloadIcon from '../../../assets/icons/download.svg'
+import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg'
+import openSidebarIcon from '../../../assets/icons/open-sidebar.svg'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
@@ -113,9 +115,15 @@ export default class PDFToolbar extends PDFViewerComponent {
     return html`
       <div class="toolbar">
         <div class="toolbar__section">
-          <button class="btn--icon" @click="${this.toggleSearch}">
-            <img src=${searchIcon} alt="Search" title="Search" />
-          </button>
+          ${sidebarCollapsed ? html`
+            <button class="btn--icon" @click="${this.toggleSidebar}" title="Open Sidebar">
+              <img src=${openSidebarIcon} alt="Open Sidebar" />
+            </button>
+          ` : html`
+            <button class="btn--icon" @click="${this.toggleSidebar}" title="Close Sidebar">
+              <img src=${closeSidebarIcon} alt="Close Sidebar" />
+            </button>
+          `}
 
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
@@ -151,6 +159,10 @@ export default class PDFToolbar extends PDFViewerComponent {
         </div>
 
         <div class="toolbar__section">
+          <button class="btn--icon" @click="${this.toggleSearch}">
+            <img src=${searchIcon} alt="Search" title="Search" />
+          </button>
+
           <button class="btn--icon" @click="${this.print}" title="Print">
             <img src=${printIcon} alt="Print" />
           </button>
