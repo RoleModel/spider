@@ -39,32 +39,4 @@ export default css`
     opacity: 0;
     pointer-events: none;
   }
-
-  .floating-controls {
-    position: absolute;
-    left: 100%;
-    top: 16px;
-    transform: translateY(-50%);
-    z-index: 10;
-  }
-
-  .btn--icon {
-    padding: var(--theme-spacing-xs, 0.25rem);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    border-radius: var(--theme-border-radius-md, 4px);
-    transition: background-color 0.2s ease;
-  }
-
-  .btn--icon:hover {
-    background: var(--theme-neutral-100);
-  }
-
-  .btn--icon img {
-    width: 24px;
-    height: 24px;
-  }
 `

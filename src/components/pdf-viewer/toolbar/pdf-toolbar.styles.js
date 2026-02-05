@@ -8,8 +8,8 @@ export default css`
 
   .toolbar {
     position: relative;
-    padding: var(--theme-spacing-sm, 0.5rem);
-    background: var(--theme-neutral-50, #ffffff);
+    padding: var(--theme-spacing-sm);
+    background: var(--theme-neutral-50);
     border-bottom: var(--theme-border-width-sm, 1px) solid var(--theme-border, #ddd);
     display: flex;
     align-items: center;
@@ -114,7 +114,7 @@ export default css`
   .search-dropdown {
     position: absolute;
     top: 100%;
-    left: var(--theme-spacing-sm, 0.5rem);
+    right: var(--theme-spacing-sm, 0.5rem);
     display: flex;
     align-items: center;
     gap: var(--theme-spacing-sm, 0.5rem);
