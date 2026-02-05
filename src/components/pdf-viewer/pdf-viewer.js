@@ -17,6 +17,7 @@ export default class PDFViewer extends LitElement {
     return {
       src: { type: String },
       open: { type: Boolean, reflect: true },
+      initialPage: { type: Number, attribute: 'initial-page' },
       themeHue: { type: Number, attribute: 'theme-hue' },
       themeSaturation: { type: Number, attribute: 'theme-saturation' },
       pdfDoc: { type: Object, state: true },
@@ -39,6 +40,7 @@ export default class PDFViewer extends LitElement {
     super()
     this.src = ''
     this.open = false
+    this.initialPage = 1
     this.themeHue = 217
     this.themeSaturation = 89
     this.pdfDoc = null
@@ -236,7 +238,13 @@ export default class PDFViewer extends LitElement {
       const loadingTask = pdfjsLib.getDocument(this.src)
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
-      this.currentPage = 1
+
+      const pageToLoad = Math.min(Math.max(1, this.initialPage || 1), this.totalPages)
+      this.currentPage = pageToLoad
+
+      if (pageToLoad > 1) {
+        this.shouldScroll = true
+      }
     } catch (error) {
       console.error('Error loading PDF:', error)
     }

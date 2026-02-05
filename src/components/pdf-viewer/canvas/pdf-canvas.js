@@ -23,9 +23,15 @@ export default class PDFCanvas extends PDFViewerComponent {
   async updated() {
     if (this.context?.pdfDoc && this.pages.length === 0) {
       await this.loadPages()
+
+      if (this.context?.shouldScroll) {
+        setTimeout(() => {
+          this.scrollToPage(this.context.currentPage)
+        }, 100)
+      }
     }
 
-    if (this.context?.shouldScroll) {
+    if (this.context?.shouldScroll && this.pages.length > 0) {
       this.scrollToPage(this.context.currentPage)
     }
   }
