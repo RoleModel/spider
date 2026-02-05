@@ -2,6 +2,8 @@ import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-sidebar.styles.js'
 import '../thumbnail/pdf-thumbnail.js'
+import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg'
+import openSidebarIcon from '../../../assets/icons/open-sidebar.svg'
 
 export default class PDFSidebar extends PDFViewerComponent {
   static get styles() {
@@ -52,6 +54,10 @@ export default class PDFSidebar extends PDFViewerComponent {
     }
   }
 
+  toggleSidebar() {
+    this.context?.toggleSidebar()
+  }
+
   renderThumbnails() {
     if (!this.context?.pdfDoc) return html``
 
@@ -76,9 +82,23 @@ export default class PDFSidebar extends PDFViewerComponent {
     const { sidebarCollapsed } = this.context
 
     return html`
-      <div class="sidebar ${sidebarCollapsed ? 'collapsed' : ''}">
-        <div class="thumbnails-container">
-          ${this.renderThumbnails()}
+      <div class="sidebar-container">
+        <div class="sidebar ${sidebarCollapsed ? 'collapsed' : ''}">
+          <div class="thumbnails-container">
+            ${this.renderThumbnails()}
+          </div>
+        </div>
+        <div class="floating-controls">
+          ${sidebarCollapsed ? html`
+              <button class="btn--icon" @click="${this.toggleSidebar}" title="Open Sidebar">
+                <img src=${openSidebarIcon} alt="Open Sidebar" />
+              </button>
+            ` : ''}
+          
+          ${!sidebarCollapsed ? html`
+            <button class="btn--icon" @click="${this.toggleSidebar}" title="Close Sidebar">
+              <img src=${closeSidebarIcon} alt="Close Sidebar" />
+            </button>` : ''}
         </div>
       </div>
     `

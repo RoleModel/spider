@@ -5,9 +5,10 @@ export const updateThemeColors = (element, hue = 217, saturation = 89) => {
   element.style.setProperty('--theme-primary-dark', `hsl(${hue}, ${saturation}%, 40%)`)
   element.style.setProperty('--theme-primary-darker', `hsl(${hue}, ${saturation}%, 30%)`)
   element.style.setProperty('--theme-primary-transparent', `hsla(${hue}, ${saturation}%, 50%, 70%)`)
+  element.style.setProperty('--theme-primary-very-transparent', `hsla(${hue}, ${saturation}%, 50%, 20%)`)
 
-  element.style.setProperty('--theme-neutral-50', 'hsl(0, 0%, 98%)')
-  element.style.setProperty('--theme-neutral-100', 'hsl(0, 0%, 95%)')
+  element.style.setProperty('--theme-neutral-50', `hsl(${hue}, 15%, 97%)`)
+  element.style.setProperty('--theme-neutral-100', `hsl(${hue}, 25%, 95%)`)
   element.style.setProperty('--theme-neutral-200', 'hsl(0, 0%, 87%)')
   element.style.setProperty('--theme-neutral-300', 'hsl(0, 0%, 80%)')
   element.style.setProperty('--theme-neutral-400', 'hsl(0, 0%, 63%)')
@@ -17,6 +18,7 @@ export const updateThemeColors = (element, hue = 217, saturation = 89) => {
   element.style.setProperty('--theme-border', 'hsl(0, 0%, 87%)')
   element.style.setProperty('--theme-shadow', 'rgba(0, 0, 0, 0.1)')
 
+  element.style.setProperty('--theme-spacing-xxs', '0.15rem')
   element.style.setProperty('--theme-spacing-xs', '0.25rem')
   element.style.setProperty('--theme-spacing-sm', '0.5rem')
   element.style.setProperty('--theme-spacing-md', '1rem')
