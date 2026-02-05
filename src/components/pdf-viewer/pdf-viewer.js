@@ -18,7 +18,6 @@ export default class PDFViewer extends LitElement {
       src: { type: String },
       open: { type: Boolean, reflect: true },
       initialPage: { type: Number, attribute: 'initial-page' },
-      closeUrl: { type: String, attribute: 'close-url' },
       themeHue: { type: Number, attribute: 'theme-hue' },
       themeSaturation: { type: Number, attribute: 'theme-saturation' },
       pdfDoc: { type: Object, state: true },
@@ -42,7 +41,6 @@ export default class PDFViewer extends LitElement {
     this.src = ''
     this.open = false
     this.initialPage = 1
-    this.closeUrl = ''
     this.themeHue = 217
     this.themeSaturation = 89
     this.pdfDoc = null
@@ -119,11 +117,7 @@ export default class PDFViewer extends LitElement {
         this.goToPreviousMatch()
       },
       close: () => {
-        if (this.closeUrl) {
-          window.location.href = this.closeUrl
-        } else {
-          this.open = false
-        }
+        this.open = false
       }
     }
   }

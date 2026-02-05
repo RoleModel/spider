@@ -65,9 +65,6 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.toggleSidebar()
   }
 
-  close() {
-    this.context?.close()
-  }
 
   handlePageInput(e) {
     const value = parseInt(e.target.value, 10)
@@ -169,12 +166,6 @@ export default class PDFToolbar extends PDFViewerComponent {
           <button class="btn--icon btn--download" @click="${this.download}" title="Download">
             <img src=${downloadIcon} alt="Download" />
           </button>
-
-          <slot name="close-button">
-            <button class="btn--icon" @click="${this.close}">
-              <img src=${closeIcon} alt="Close" title="Close" />
-            </button>
-          </slot>
         </div>
 
         <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
