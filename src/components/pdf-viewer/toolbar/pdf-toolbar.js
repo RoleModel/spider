@@ -138,7 +138,7 @@ export default class PDFToolbar extends PDFViewerComponent {
           </div>
         </div>
 
-        <div class="toolbar__section toolbar__section--center">
+        <div class="toolbar__section">
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.zoomOut}" ?disabled="${scale <= 0.5}">
               <img src=${zoomOutIcon} alt="Zoom Out" title="Zoom Out" />
@@ -154,7 +154,7 @@ export default class PDFToolbar extends PDFViewerComponent {
           <button class="btn--icon" @click="${this.print}" title="Print">
             <img src=${printIcon} alt="Print" />
           </button>
-          <button class="btn--icon" @click="${this.download}" title="Download">
+          <button class="btn--icon btn--download" @click="${this.download}" title="Download">
             <img src=${downloadIcon} alt="Download" />
           </button>
 

@@ -38,12 +38,6 @@ export default css`
     border: none;
   }
 
-  @media (max-width: 512px) {
-    .btn--icon img {
-      width: var(--theme-icon-size-lg, 18px);
-    }
-  }
-
   button:hover:not(:disabled) {
     background: var(--theme-neutral-100, #e9e9e9);
   }
@@ -91,13 +85,7 @@ export default css`
   .toolbar__section {
     display: flex;
     align-items: center;
-    gap: var(--theme-spacing-sm);
-  }
-
-  .toolbar__section--center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    gap: var(--theme-spacing-sm, 0.5rem);
   }
 
   .toolbar__section-group {
@@ -170,6 +158,14 @@ export default css`
 
     .zoom-level {
       display: none;
+    }
+
+    .btn--download {
+      display: none;
+    }
+
+    .btn--icon img {
+      width: var(--theme-icon-size-lg, 18px);
     }
   }
 `
