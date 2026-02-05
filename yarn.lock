@@ -378,6 +378,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolemodel/spider@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@rolemodel/spider@workspace:."
+  dependencies:
+    "@lit/context": "npm:^1.1.6"
+    lit: "npm:^3.3.2"
+    pdfjs-dist: "npm:^5.4.624"
+    vite: "npm:^7.2.4"
+  languageName: unknown
+  linkType: soft
+
 "@rollup/rollup-android-arm-eabi@npm:4.57.1":
   version: 4.57.1
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.57.1"
@@ -1277,17 +1288,6 @@ __metadata:
   checksum: 10c0/7bda1fc4c197e3c6ff17de1b8b2c20e60af81b63a52cb32ec5a5d67a20a7d42651e2cb34ebe93833c5a2a084377e17455854fee3e21e7925c64a51b6a52b0faf
   languageName: node
   linkType: hard
-
-"spider@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "spider@workspace:."
-  dependencies:
-    "@lit/context": "npm:^1.1.6"
-    lit: "npm:^3.3.2"
-    pdfjs-dist: "npm:^5.4.624"
-    vite: "npm:^7.2.4"
-  languageName: unknown
-  linkType: soft
 
 "ssri@npm:^13.0.0":
   version: 13.0.0

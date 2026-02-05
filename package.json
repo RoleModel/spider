@@ -30,7 +30,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && rsync -a src/assets dist/"
+    "build": "vite build"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",
@@ -40,7 +40,8 @@
   "devDependencies": {
     "vite": "^7.2.4"
   },
+  "homepage": "https://github.com/RoleModel/spider#readme",
   "publishConfig": {
-    "@rolemodel-it-support": "https://npm.pkg.github.com"
+    "@RoleModel:registry": "https://npm.pkg.github.com"
   }
 }

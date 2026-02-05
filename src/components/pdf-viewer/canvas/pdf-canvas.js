@@ -1,7 +1,7 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './rm-pdf-canvas.styles.js'
-import '../page/rm-pdf-page.js'
+import styles from './pdf-canvas.styles.js'
+import '../page/pdf-page.js'
 
 export default class PDFCanvas extends PDFViewerComponent {
   static get styles() {

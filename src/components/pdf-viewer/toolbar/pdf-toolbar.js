@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './rm-pdf-toolbar.styles.js'
+import styles from './pdf-toolbar.styles.js'
 import closeIcon from '../../../assets/icons/close.svg'
 import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg'
 import openSidebarIcon from '../../../assets/icons/open-sidebar.svg'

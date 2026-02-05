@@ -2,12 +2,12 @@ import { LitElement, html } from 'lit'
 import { ContextProvider } from '@lit/context'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
-import styles from './rm-pdf-viewer.styles.js'
+import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
 import { updateThemeColors } from './theme-config.js'
-import './toolbar/rm-pdf-toolbar.js'
-import './sidebar/rm-pdf-sidebar.js'
-import './canvas/rm-pdf-canvas.js'
+import './toolbar/pdf-toolbar.js'
+import './sidebar/pdf-sidebar.js'
+import './canvas/pdf-canvas.js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 

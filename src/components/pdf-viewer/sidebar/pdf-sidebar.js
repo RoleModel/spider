@@ -1,7 +1,7 @@
 import { html } from 'lit'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
-import styles from './rm-pdf-sidebar.styles.js'
-import '../thumbnail/rm-pdf-thumbnail.js'
+import styles from './pdf-sidebar.styles.js'
+import '../thumbnail/pdf-thumbnail.js'
 
 export default class PDFSidebar extends PDFViewerComponent {
   static get styles() {
