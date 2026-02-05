@@ -113,9 +113,12 @@ export default class PDFCanvas extends PDFViewerComponent {
           <rm-pdf-page
             .page=${page}
             .scale=${this.context?.scale || 1}
-            .pageNumber=${pageNumber}>
+            .pageNumber=${pageNumber}
+            .searchTerm=${this.context?.searchTerm || ''}
+            .searchMatches=${this.context?.searchMatches || []}
+            .currentMatchIndex=${this.context?.currentMatchIndex || -1}>
           </rm-pdf-page>
-        `)}
+        `)})
       </div>
     `
   }
