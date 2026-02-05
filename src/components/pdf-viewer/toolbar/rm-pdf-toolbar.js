@@ -56,10 +56,12 @@ export default class PDFToolbar extends PDFViewerComponent {
 
   toggleSearch() {
     this.searchOpen = !this.searchOpen
+    if (!this.searchOpen) this._clearSearch()
   }
 
   closeSearch() {
     this.searchOpen = false
+    this._clearSearch()
   }
 
   toggleSidebar() {
@@ -80,10 +82,32 @@ export default class PDFToolbar extends PDFViewerComponent {
     }
   }
 
+  handleSearchInput(e) {
+    const term = e.target.value
+    this.context?.search(term)
+  }
+
+  handleSearchKeydown(e) {
+    if (e.key === 'Enter') {
+      this.context?.nextMatch()
+    }
+  }
+
+  nextSearchMatch() {
+    this.context?.nextMatch()
+  }
+
+  previousSearchMatch() {
+    this.context?.previousMatch()
+  }
+
   render() {
     if (!this.context) return html``
 
-    const { currentPage, totalPages, scale, sidebarCollapsed } = this.context
+    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex } = this.context
+
+    const matchCount = searchMatches?.length || 0
+    const matchDisplay = matchCount > 0 ? `${currentMatchIndex + 1} of ${matchCount}` : '0 of 0'
 
     return html`
       <div class="toolbar">
@@ -149,14 +173,16 @@ export default class PDFToolbar extends PDFViewerComponent {
             type="text"
             class="search-dropdown__input"
             placeholder="Search in document..."
+            @input="${this.handleSearchInput}"
+            @keydown="${this.handleSearchKeydown}"
             @click="${(e) => e.stopPropagation()}"
           />
-          <span class="search-info">1 of 10</span>
-          <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
-            <img src=${arrowLeftIcon} alt="Previous" title="Previous" />
+          <span class="search-info">${matchDisplay}</span>
+          <button class="btn--icon" @click="${this.previousSearchMatch}" ?disabled="${matchCount === 0}">
+            <img src=${arrowLeftIcon} alt="Previous Match" title="Previous Match" />
           </button>
-          <button class="btn--icon" @click="${this.nextPage}" ?disabled="${currentPage >= totalPages}">
-            <img src=${arrowRightIcon} alt="Next" title="Next" />
+          <button class="btn--icon" @click="${this.nextSearchMatch}" ?disabled="${matchCount === 0}">
+            <img src=${arrowRightIcon} alt="Next Match" title="Next Match" />
           </button>
           <button class="btn--icon" @click="${this.closeSearch}">
             <img src=${closeIcon} alt="Close" title="Close" />
@@ -164,6 +190,14 @@ export default class PDFToolbar extends PDFViewerComponent {
         </div>
       </div>
     `
+  }
+
+  _clearSearch() {
+    const searchInput = this.shadowRoot.getElementById('search-input')
+    if (searchInput) {
+      searchInput.value = ''
+      this.context?.search('')
+    }
   }
 }
 

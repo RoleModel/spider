@@ -11,7 +11,10 @@ export default class PDFPage extends LitElement {
     return {
       page: { type: Object },
       scale: { type: Number },
-      pageNumber: { type: Number }
+      pageNumber: { type: Number },
+      searchTerm: { type: String },
+      searchMatches: { type: Array },
+      currentMatchIndex: { type: Number }
     }
   }
 
@@ -26,6 +29,13 @@ export default class PDFPage extends LitElement {
   async updated(changedProperties) {
     if (this.page && (changedProperties.has('page') || changedProperties.has('scale'))) {
       await this.renderPage()
+    } else if (this.page && changedProperties.has('searchTerm')) {
+      const textLayerDiv = this.shadowRoot.querySelector('.text-layer')
+      if (textLayerDiv) {
+        const viewport = this.page.getViewport({ scale: this.scale })
+        textLayerDiv.innerHTML = ''
+        await this.renderTextLayer(viewport, textLayerDiv)
+      }
     }
   }
 
@@ -101,13 +111,36 @@ export default class PDFPage extends LitElement {
           textDiv.style.width = `${width}px`
         }
 
-        textDiv.textContent = textItem.str
+        if (this.searchTerm && textItem.str.includes(this.searchTerm)) {
+          this.highlightText(textDiv, textItem.str, this.searchTerm)
+        } else {
+          textDiv.textContent = textItem.str
+        }
 
         textLayerDiv.appendChild(textDiv)
       })
     } catch (error) {
       console.error('Error rendering text layer:', error)
     }
+  }
+
+  highlightText(element, text, searchTerm) {
+    const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${escapedTerm})`, 'g')
+    const parts = text.split(regex)
+
+    element.innerHTML = ''
+    parts.forEach((part) => {
+      if (part === searchTerm) {
+        const mark = document.createElement('mark')
+        mark.textContent = part
+        mark.style.backgroundColor = 'yellow'
+        mark.style.color = 'black'
+        element.appendChild(mark)
+      } else {
+        element.appendChild(document.createTextNode(part))
+      }
+    })
   }
 
   disconnectedCallback() {
