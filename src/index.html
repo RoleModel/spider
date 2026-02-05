@@ -22,6 +22,16 @@
         <canvas id="thumbnail-canvas"></canvas>
         <div class="thumbnail-label">Click to Open PDF</div>
       </div>
+
+      <div class="thumbnail-wrapper error-thumbnail" id="error-thumbnail">
+        <div class="error-thumbnail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+            <path d="M12 8v4m0 4h.01" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="thumbnail-label error-label">Click to Test Error State</div>
+      </div>
     </div>
 
     <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89"></rm-pdf-viewer>
@@ -35,6 +45,7 @@
       const viewer = document.getElementById('viewer');
       const thumbnailWrapper = document.getElementById('thumbnail-wrapper');
       const canvas = document.getElementById('thumbnail-canvas');
+      const errorThumbnail = document.getElementById('error-thumbnail');
 
       async function renderThumbnail() {
         try {
@@ -62,10 +73,16 @@
       }
 
       thumbnailWrapper.addEventListener('click', () => {
-        viewer.open = true
-      })
+        viewer.src = '/data/the-veldt.pdf';
+        viewer.open = true;
+      });
 
-      renderThumbnail()
+      errorThumbnail.addEventListener('click', () => {
+        viewer.src = '/non-existent-file.pdf';
+        viewer.open = true;
+      });
+
+      renderThumbnail();
     </script>
   </body>
 </html>

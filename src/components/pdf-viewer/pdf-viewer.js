@@ -28,7 +28,8 @@ export default class PDFViewer extends LitElement {
       shouldScroll: { type: Boolean, state: true },
       searchTerm: { type: String, state: true },
       searchMatches: { type: Array, state: true },
-      currentMatchIndex: { type: Number, state: true }
+      currentMatchIndex: { type: Number, state: true },
+      error: { type: Object, state: true }
     }
   }
 
@@ -52,6 +53,7 @@ export default class PDFViewer extends LitElement {
     this.searchTerm = ''
     this.searchMatches = []
     this.currentMatchIndex = -1
+    this.error = null
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -234,6 +236,9 @@ export default class PDFViewer extends LitElement {
   async loadPDF() {
     if (!this.src) return
 
+    this.error = null
+    this.pdfDoc = null
+
     try {
       const loadingTask = pdfjsLib.getDocument(this.src)
       this.pdfDoc = await loadingTask.promise
@@ -247,6 +252,10 @@ export default class PDFViewer extends LitElement {
       }
     } catch (error) {
       console.error('Error loading PDF:', error)
+      this.error = {
+        message: error.message || 'Failed to load PDF',
+        name: error.name || 'PDFError'
+      }
     }
   }
 
@@ -325,12 +334,36 @@ export default class PDFViewer extends LitElement {
         <rm-pdf-toolbar>
           <slot name="close-button" slot="close-button"></slot>
         </rm-pdf-toolbar>
-        <div class="content-container">
-          <rm-pdf-sidebar></rm-pdf-sidebar>
-          <rm-pdf-canvas></rm-pdf-canvas>
+        ${this.error ? this._renderError() : html`
+          <div class="content-container">
+            <rm-pdf-sidebar></rm-pdf-sidebar>
+            <rm-pdf-canvas></rm-pdf-canvas>
+          </div>
+        `}
+      </div>
+    `
+  }
+
+  _renderError() {
+    return html`
+      <div class="error-container">
+        <div class="error-content">
+          <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+            <path d="M12 8v4m0 4h.01" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h2 class="error-title">Unable to Load PDF</h2>
+          <p class="error-message">${this.error.message}</p>
+          <button class="error-retry" @click=${this._handleRetry}>
+            Try Again
+          </button>
         </div>
       </div>
     `
+  }
+
+  _handleRetry() {
+    this.loadPDF()
   }
 }
 
