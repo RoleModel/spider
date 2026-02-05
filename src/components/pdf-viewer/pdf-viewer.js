@@ -5,6 +5,7 @@ import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
 import { updateThemeColors } from './theme-config.js'
+import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
 import './canvas/pdf-canvas.js'
@@ -250,7 +251,7 @@ export default class PDFViewer extends LitElement {
         const items = []
 
         textContent.items.forEach((item) => {
-          const normalizedText = this._normalizeText(item.str)
+          const normalizedText = normalizeText(item.str)
           items.push({
             text: normalizedText,
             index: pageText.length
@@ -311,12 +312,6 @@ export default class PDFViewer extends LitElement {
         </div>
       </div>
     `
-  }
-
-  _normalizeText(text) {
-    return text
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
   }
 }
 

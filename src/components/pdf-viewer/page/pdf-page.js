@@ -1,6 +1,7 @@
 import { html } from 'lit'
-import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import * as pdfjsLib from 'pdfjs-dist'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
+import { normalizeText } from '../helpers/text-helper.js'
 import styles from './pdf-page.styles.js'
 
 export default class PDFPage extends PDFViewerComponent {
@@ -115,7 +116,7 @@ export default class PDFPage extends PDFViewerComponent {
           textDiv.style.width = `${width}px`
         }
 
-        const normalizedText = this._normalizeText(textItem.str)
+        const normalizedText = normalizeText(textItem.str)
         const itemStart = charPosition
         const itemEnd = charPosition + normalizedText.length
 
@@ -200,12 +201,6 @@ export default class PDFPage extends PDFViewerComponent {
       this._renderTask.cancel()
       this._renderTask = null
     }
-  }
-
-  _normalizeText(text) {
-    return text
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
   }
 }
 
