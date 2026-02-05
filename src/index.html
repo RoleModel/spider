@@ -24,7 +24,11 @@
       </div>
     </div>
 
-    <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89"></rm-pdf-viewer>
+    <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89">
+      <button slot="close-button" id="custom-close-btn" style="padding: 8px 16px; cursor: pointer; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 14px;">
+        Custom Close
+      </button>
+    </rm-pdf-viewer>
 
     <script type="module">
       import * as pdfjsLib from 'pdfjs-dist';
@@ -62,10 +66,15 @@
       }
 
       thumbnailWrapper.addEventListener('click', () => {
-        viewer.open = true;
-      });
+        viewer.open = true
+      })
 
-      renderThumbnail();
+      const customCloseBtn = document.getElementById('custom-close-btn')
+      customCloseBtn.addEventListener('click', () => {
+        viewer.open = false
+      })
+
+      renderThumbnail()
     </script>
   </body>
 </html>

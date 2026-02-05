@@ -34,13 +34,47 @@ Simply copy the entire `pdf-viewer` directory into your project.
 </html>
 ```
 
+### Using the Close URL
+
+By default, clicking the close button hides the viewer. If you want to redirect to a different page when the close button is clicked, use the `close-url` property:
+
+```html
+<!-- Redirect to home page when closed -->
+<pdf-viewer src="/document.pdf" close-url="/"></pdf-viewer>
+
+<!-- Redirect to documents listing page when closed -->
+<pdf-viewer src="/document.pdf" close-url="/documents"></pdf-viewer>
+```
+
+### Custom Close Button
+
+You can provide your own custom close button using the `close-button` slot. This allows you to render any HTML element or custom component as the close action:
+
+```html
+<rm-pdf-viewer src="/document.pdf">
+  <button slot="close-button" onclick="handleCustomClose()">
+    Custom Close
+  </button>
+</rm-pdf-viewer>
+```
+
+The slotted element should trigger the close action on its own (e.g., via `onclick` handlers). If no custom close button is provided, the default close button with an icon will be displayed.
+
 ### Properties
 
 | Property | Type   | Default | Description              |
 |----------|--------|---------|--------------------------|
 | `src`    | String | `''`    | Path to the PDF file     |
+| `initial-page` | Number | `1` | Initial page to display when PDF loads |
+| `close-url` | String | `''` | URL to redirect to when close button is clicked. If not set, viewer closes with default behavior |
 | `theme-hue` | Number | `217` | Hue value (0-360) for the theme color |
 | `theme-saturation` | Number | `89` | Saturation value (0-100) for the theme color |
+
+### Slots
+
+| Slot Name | Description |
+|-----------|-------------|
+| `close-button` | Custom close button element. If not provided, a default close button with icon is displayed |
 
 ### Theme Customization
 

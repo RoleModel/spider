@@ -158,9 +158,11 @@ export default class PDFToolbar extends PDFViewerComponent {
             <img src=${downloadIcon} alt="Download" />
           </button>
 
-          <button class="btn--icon" @click="${this.close}">
-            <img src=${closeIcon} alt="Close" title="Close" />
-          </button>
+          <slot name="close-button">
+            <button class="btn--icon" @click="${this.close}">
+              <img src=${closeIcon} alt="Close" title="Close" />
+            </button>
+          </slot>
         </div>
 
         <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
