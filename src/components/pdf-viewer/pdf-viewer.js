@@ -55,6 +55,7 @@ export default class PDFViewer extends LitElement {
     this.searchMatches = []
     this.currentMatchIndex = -1
     this.error = null
+    this.loading = false
     this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
 
     this._provider = new ContextProvider(this, {
@@ -244,7 +245,7 @@ export default class PDFViewer extends LitElement {
 
     this.error = null
     this.pdfDoc = null
-
+    this.loading = true
     try {
       const loadingTask = pdfjsLib.getDocument(this.src)
       this.pdfDoc = await loadingTask.promise
@@ -262,6 +263,8 @@ export default class PDFViewer extends LitElement {
         message: error.message || 'Failed to load PDF',
         name: error.name || 'PDFError'
       }
+    } finally {
+      this.loading = false
     }
   }
 
@@ -349,6 +352,16 @@ export default class PDFViewer extends LitElement {
             <rm-pdf-sidebar></rm-pdf-sidebar>
             <rm-pdf-canvas></rm-pdf-canvas>
           </div>
+        `}
+
+        ${this.loading ? html`
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading PDF...</p>
+          </div>
+        ` : html`
+          <rm-pdf-sidebar></rm-pdf-sidebar>
+          <rm-pdf-canvas></rm-pdf-canvas>
         `}
       </div>
     `

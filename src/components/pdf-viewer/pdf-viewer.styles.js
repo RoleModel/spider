@@ -87,4 +87,34 @@ export default css`
   .error-retry:active {
     background: var(--theme-primary-darker, #1e40af);
   }
+
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    background: var(--theme-neutral-50, #fafafa);
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--theme-neutral-200, #e5e5e5);
+    border-top-color: var(--theme-primary, #0066cc);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-spinner p {
+    margin-top: 1rem;
+    color: var(--theme-neutral-600, #555);
+    font-size: var(--theme-font-size-base, 14px);
+  }
 `
