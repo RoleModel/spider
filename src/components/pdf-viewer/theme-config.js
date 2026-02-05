@@ -35,4 +35,7 @@ export const updateThemeColors = (element, hue = 217, saturation = 89) => {
   element.style.setProperty('--theme-font-size-sm', '12px')
   element.style.setProperty('--theme-font-size-md', '14px')
   element.style.setProperty('--theme-font-size-base', '0.9rem')
+
+  element.style.setProperty('--theme-icon-size-md', '16px')
+  element.style.setProperty('--theme-icon-size-lg', '18px')
 }
