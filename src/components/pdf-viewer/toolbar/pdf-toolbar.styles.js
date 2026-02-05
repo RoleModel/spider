@@ -36,6 +36,10 @@ export default css`
     justify-content: center;
     background: transparent;
     border: none;
+
+    img {
+      width: var(--theme-icon-size-xl, 18px);
+    }
   }
 
   button:hover:not(:disabled) {
@@ -50,6 +54,7 @@ export default css`
   .page-info {
     font-weight: 500;
     color: var(--theme-neutral-500, #333);
+    font-size: var(--theme-font-size-sm, 12px);
   }
 
   .page-input {
@@ -58,8 +63,7 @@ export default css`
     border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
     border-radius: var(--theme-border-radius-md, 4px);
     padding: var(--theme-spacing-xs, 0.25rem);
-    font-size: var(--theme-font-size-base, 0.9rem);
-    font-weight: 500;
+    font-size: var(--theme-font-size-sm, 12px);
     background-color: var(--theme-neutral-50, #fafafa);
 
     &:hover {
@@ -86,13 +90,7 @@ export default css`
   .toolbar__section {
     display: flex;
     align-items: center;
-    gap: var(--theme-spacing-sm);
-  }
-
-  .toolbar__section--center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    gap: var(--theme-spacing-sm, 0.5rem);
   }
 
   .toolbar__section-group {
@@ -129,7 +127,7 @@ export default css`
     visibility: hidden;
     transform: translateY(-10px);
     transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-    z-index: 10;
+    z-index: 11;
   }
 
   .search-dropdown--open {
@@ -148,5 +146,19 @@ export default css`
 
   .search-dropdown__input:focus {
     border-color: var(--theme-primary, #0066cc);
+  }
+
+  @media (max-width: 512px) {
+    .toolbar__section {
+      gap: var(--theme-spacing-sm, 0.5rem);
+    }
+
+    .zoom-level {
+      display: none;
+    }
+
+    .btn--download {
+      display: none;
+    }
   }
 `
