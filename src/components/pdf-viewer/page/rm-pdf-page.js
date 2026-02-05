@@ -1,8 +1,9 @@
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
+import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import * as pdfjsLib from 'pdfjs-dist'
 import styles from './rm-pdf-page.styles.js'
 
-export default class PDFPage extends LitElement {
+export default class PDFPage extends PDFViewerComponent {
   static get styles() {
     return styles
   }
@@ -29,7 +30,7 @@ export default class PDFPage extends LitElement {
   async updated(changedProperties) {
     if (this.page && (changedProperties.has('page') || changedProperties.has('scale'))) {
       await this.renderPage()
-    } else if (this.page && changedProperties.has('searchTerm')) {
+    } else if (this.page && (changedProperties.has('searchTerm') || changedProperties.has('searchMatches') || changedProperties.has('currentMatchIndex'))) {
       const textLayerDiv = this.shadowRoot.querySelector('.text-layer')
       if (textLayerDiv) {
         const viewport = this.page.getViewport({ scale: this.scale })
@@ -90,6 +91,9 @@ export default class PDFPage extends LitElement {
     try {
       const textContent = await this.page.getTextContent()
 
+      const pageMatches = this.searchMatches?.filter(match => match.pageNum === this.pageNumber) || []
+      let charPosition = 0
+
       textContent.items.forEach((textItem) => {
         const tx = pdfjsLib.Util.transform(
           viewport.transform,
@@ -112,12 +116,21 @@ export default class PDFPage extends LitElement {
         }
 
         const normalizedText = this._normalizeText(textItem.str)
-        if (this.searchTerm && normalizedText.includes(this.searchTerm)) {
-          this.highlightText(textDiv, normalizedText, this.searchTerm)
+        const itemStart = charPosition
+        const itemEnd = charPosition + normalizedText.length
+
+        const overlappingMatches = pageMatches.filter(match => {
+          const matchEnd = match.charIndex + this.searchTerm.length
+          return match.charIndex < itemEnd && matchEnd > itemStart
+        })
+
+        if (overlappingMatches.length > 0) {
+          this.highlightText(textDiv, normalizedText, itemStart, overlappingMatches)
         } else {
-          textDiv.textContent = textItem.str
+          textDiv.textContent = normalizedText
         }
 
+        charPosition += normalizedText.length
         textLayerDiv.appendChild(textDiv)
       })
     } catch (error) {
@@ -125,21 +138,45 @@ export default class PDFPage extends LitElement {
     }
   }
 
-  highlightText(element, text, searchTerm) {
-    const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const regex = new RegExp(`(${escapedTerm})`, 'g')
-    const parts = text.split(regex)
-
+  highlightText(element, text, itemStart, matches) {
     element.innerHTML = ''
-    parts.forEach((part) => {
-      if (part === searchTerm) {
+
+    const segments = []
+    let currentPos = 0
+
+    matches.forEach(match => {
+      const relativeStart = Math.max(0, match.charIndex - itemStart)
+      const relativeEnd = Math.min(text.length, match.charIndex + this.searchTerm.length - itemStart)
+
+      if (relativeStart > currentPos) {
+        segments.push({ text: text.substring(currentPos, relativeStart), highlight: false })
+      }
+
+      const globalMatchIndex = this.searchMatches.indexOf(match)
+      const isCurrentMatch = globalMatchIndex === this.currentMatchIndex
+
+      segments.push({
+        text: text.substring(relativeStart, relativeEnd),
+        highlight: true,
+        isCurrentMatch
+      })
+
+      currentPos = relativeEnd
+    })
+
+    if (currentPos < text.length) {
+      segments.push({ text: text.substring(currentPos), highlight: false })
+    }
+
+    segments.forEach(segment => {
+      if (segment.highlight) {
         const mark = document.createElement('mark')
-        mark.textContent = part
-        mark.style.backgroundColor = 'yellow'
-        mark.style.color = 'black'
+        mark.textContent = segment.text
+        mark.style.backgroundColor = segment.isCurrentMatch ? 'orange' : 'yellow'
+        mark.style.color = 'transparent'
         element.appendChild(mark)
       } else {
-        element.appendChild(document.createTextNode(part))
+        element.appendChild(document.createTextNode(segment.text))
       }
     })
   }

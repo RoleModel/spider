@@ -250,15 +250,15 @@ export default class PDFViewer extends LitElement {
         const items = []
 
         textContent.items.forEach((item) => {
+          const normalizedText = this._normalizeText(item.str)
           items.push({
-            text: item.str,
+            text: normalizedText,
             index: pageText.length
           })
-          pageText += item.str
+          pageText += normalizedText
         })
 
-        const normalizedPageText = this._normalizeText(pageText)
-        let index = normalizedPageText.indexOf(term)
+        let index = pageText.indexOf(term)
 
         while (index !== -1) {
           matches.push({
