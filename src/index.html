@@ -17,10 +17,27 @@
       <a href="https://github.com/rolemodel/spider" target="_blank" class="github-link">View on GitHub</a>
     </div>
 
+    <div class="theme-controls">
+      <label for="hue-slider" class="theme-label">
+        Theme Color: <span id="hue-value">217°</span>
+      </label>
+      <input type="range" id="hue-slider" min="0" max="360" value="217" class="hue-slider">
+    </div>
+
     <div class="controls">
       <div class="thumbnail-wrapper" id="thumbnail-wrapper">
         <canvas id="thumbnail-canvas"></canvas>
         <div class="thumbnail-label">Click to Open PDF</div>
+      </div>
+
+      <div class="thumbnail-wrapper error-thumbnail" id="error-thumbnail">
+        <div class="error-thumbnail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+            <path d="M12 8v4m0 4h.01" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="thumbnail-label error-label">Click to Test Error State</div>
       </div>
     </div>
 
@@ -35,6 +52,9 @@
       const viewer = document.getElementById('viewer');
       const thumbnailWrapper = document.getElementById('thumbnail-wrapper');
       const canvas = document.getElementById('thumbnail-canvas');
+      const errorThumbnail = document.getElementById('error-thumbnail');
+      const hueSlider = document.getElementById('hue-slider');
+      const hueValue = document.getElementById('hue-value');
 
       async function renderThumbnail() {
         try {
@@ -62,10 +82,22 @@
       }
 
       thumbnailWrapper.addEventListener('click', () => {
-        viewer.open = true
-      })
+        viewer.src = '/data/the-veldt.pdf';
+        viewer.open = true;
+      });
 
-      renderThumbnail()
+      errorThumbnail.addEventListener('click', () => {
+        viewer.src = '/non-existent-file.pdf';
+        viewer.open = true;
+      });
+
+      hueSlider.addEventListener('input', (e) => {
+        const hue = e.target.value;
+        viewer.themeHue = parseInt(hue);
+        hueValue.textContent = `${hue}°`;
+      });
+
+      renderThumbnail();
     </script>
   </body>
 </html>
