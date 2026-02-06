@@ -1,16 +1,17 @@
 import { html } from 'lit'
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-toolbar.styles.js'
-import closeIcon from '../../../assets/icons/close.svg'
-import arrowLeftIcon from '../../../assets/icons/arrow-left.svg'
-import arrowRightIcon from '../../../assets/icons/arrow-right.svg'
-import zoomOutIcon from '../../../assets/icons/zoom-out.svg'
-import zoomInIcon from '../../../assets/icons/zoom-in.svg'
-import searchIcon from '../../../assets/icons/search.svg'
-import printIcon from '../../../assets/icons/print.svg'
-import downloadIcon from '../../../assets/icons/download.svg'
-import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg'
-import openSidebarIcon from '../../../assets/icons/open-sidebar.svg'
+import closeIcon from '../../../assets/icons/close.svg?raw'
+import arrowLeftIcon from '../../../assets/icons/arrow-left.svg?raw'
+import arrowRightIcon from '../../../assets/icons/arrow-right.svg?raw'
+import zoomOutIcon from '../../../assets/icons/zoom-out.svg?raw'
+import zoomInIcon from '../../../assets/icons/zoom-in.svg?raw'
+import searchIcon from '../../../assets/icons/search.svg?raw'
+import printIcon from '../../../assets/icons/print.svg?raw'
+import downloadIcon from '../../../assets/icons/download.svg?raw'
+import closeSidebarIcon from '../../../assets/icons/close-sidebar.svg?raw'
+import openSidebarIcon from '../../../assets/icons/open-sidebar.svg?raw'
 
 export default class PDFToolbar extends PDFViewerComponent {
   static get styles() {
@@ -65,6 +66,17 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.toggleSidebar()
   }
 
+  close() {
+    this.context?.close()
+  }
+
+  print() {
+    this.context?.print()
+  }
+
+  download() {
+    this.context?.download()
+  }
 
   handlePageInput(e) {
     const value = parseInt(e.target.value, 10)
@@ -114,17 +126,17 @@ export default class PDFToolbar extends PDFViewerComponent {
         <div class="toolbar__section">
           ${sidebarCollapsed ? html`
             <button class="btn--icon" @click="${this.toggleSidebar}" title="Open Sidebar">
-              <img src=${openSidebarIcon} alt="Open Sidebar" />
+              ${unsafeSVG(openSidebarIcon)}
             </button>
           ` : html`
             <button class="btn--icon" @click="${this.toggleSidebar}" title="Close Sidebar">
-              <img src=${closeSidebarIcon} alt="Close Sidebar" />
+              ${unsafeSVG(closeSidebarIcon)}
             </button>
           `}
 
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
-              <img src=${arrowLeftIcon} alt="Previous" title="Previous" />
+              ${unsafeSVG(arrowLeftIcon)}
             </button>
             <span class="page-info">
               <input
@@ -138,7 +150,7 @@ export default class PDFToolbar extends PDFViewerComponent {
               /> of ${totalPages}
             </span>
             <button class="btn--icon" @click="${this.nextPage}" ?disabled="${currentPage >= totalPages}">
-              <img src=${arrowRightIcon} alt="Next" title="Next" />
+              ${unsafeSVG(arrowRightIcon)}
             </button>
           </div>
         </div>
@@ -146,26 +158,32 @@ export default class PDFToolbar extends PDFViewerComponent {
         <div class="toolbar__section">
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.zoomOut}" ?disabled="${scale <= 0.5}">
-              <img src=${zoomOutIcon} alt="Zoom Out" title="Zoom Out" />
+              ${unsafeSVG(zoomOutIcon)}
             </button>
             <span class="zoom-level">${Math.round(scale * 100)}%</span>
             <button class="btn--icon" @click="${this.zoomIn}">
-              <img src=${zoomInIcon} alt="Zoom In" title="Zoom In" />
+              ${unsafeSVG(zoomInIcon)}
             </button>
           </div>
         </div>
 
         <div class="toolbar__section">
           <button class="btn--icon" @click="${this.toggleSearch}">
-            <img src=${searchIcon} alt="Search" title="Search" />
+            ${unsafeSVG(searchIcon)}
           </button>
 
           <button class="btn--icon" @click="${this.print}" title="Print">
-            <img src=${printIcon} alt="Print" />
+            ${unsafeSVG(printIcon)}
           </button>
           <button class="btn--icon btn--download" @click="${this.download}" title="Download">
-            <img src=${downloadIcon} alt="Download" />
+            ${unsafeSVG(downloadIcon)}
           </button>
+
+          <slot name="close-button">
+            <button class="btn--icon" @click="${this.close}" title="Close">
+              ${unsafeSVG(closeIcon)}
+            </button>
+          </slot>
         </div>
 
         <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
@@ -180,13 +198,13 @@ export default class PDFToolbar extends PDFViewerComponent {
           />
           <span class="search-info">${matchDisplay}</span>
           <button class="btn--icon" @click="${this.previousSearchMatch}" ?disabled="${matchCount === 0}">
-            <img src=${arrowLeftIcon} alt="Previous Match" title="Previous Match" />
+            ${unsafeSVG(arrowLeftIcon)}
           </button>
           <button class="btn--icon" @click="${this.nextSearchMatch}" ?disabled="${matchCount === 0}">
-            <img src=${arrowRightIcon} alt="Next Match" title="Next Match" />
+            ${unsafeSVG(arrowRightIcon)}
           </button>
           <button class="btn--icon" @click="${this.closeSearch}">
-            <img src=${closeIcon} alt="Close" title="Close" />
+            ${unsafeSVG(closeIcon)}
           </button>
         </div>
       </div>

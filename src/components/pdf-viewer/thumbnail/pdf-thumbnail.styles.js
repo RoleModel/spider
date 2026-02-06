@@ -16,7 +16,7 @@ export default css`
     border: var(--theme-border-width-md, 2px) solid var(--theme-neutral-200, #efefef);
     border-radius: var(--theme-border-radius-md, 4px);
     transition: all 0.2s ease;
-    background: white;
+    background: var(--theme-neutral-50);
   }
 
   .thumbnail-container:hover {

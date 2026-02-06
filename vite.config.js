@@ -13,7 +13,7 @@ export default defineConfig({
       formats: ['es']
     },
     rollupOptions: {
-      external: ['lit', '@lit/context', 'pdfjs-dist'],
+      external: [/^lit/, /^@lit/, 'pdfjs-dist'],
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',

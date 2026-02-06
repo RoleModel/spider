@@ -4,7 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
-import { updateThemeColors } from './theme-config.js'
+import { createThemeStyleSheet } from './theme-config.js'
 import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
@@ -29,7 +29,8 @@ export default class PDFViewer extends LitElement {
       searchTerm: { type: String, state: true },
       searchMatches: { type: Array, state: true },
       currentMatchIndex: { type: Number, state: true },
-      error: { type: Object, state: true }
+      error: { type: Object, state: true },
+      themeStyleSheet: { type: Object, state: true }
     }
   }
 
@@ -54,6 +55,8 @@ export default class PDFViewer extends LitElement {
     this.searchMatches = []
     this.currentMatchIndex = -1
     this.error = null
+    this.loading = false
+    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -226,7 +229,11 @@ export default class PDFViewer extends LitElement {
   }
 
   _updateThemeColors() {
-    updateThemeColors(this, this.themeHue, this.themeSaturation)
+    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
+    this.shadowRoot.adoptedStyleSheets = [
+      ...this.constructor.elementStyles.map(s => s.styleSheet),
+      this.themeStyleSheet
+    ]
   }
 
   async firstUpdated() {
@@ -238,7 +245,7 @@ export default class PDFViewer extends LitElement {
 
     this.error = null
     this.pdfDoc = null
-
+    this.loading = true
     try {
       const loadingTask = pdfjsLib.getDocument(this.src)
       this.pdfDoc = await loadingTask.promise
@@ -256,7 +263,13 @@ export default class PDFViewer extends LitElement {
         message: error.message || 'Failed to load PDF',
         name: error.name || 'PDFError'
       }
+    } finally {
+      this.loading = false
     }
+  }
+
+  _handleRetry() {
+    this.loadPDF()
   }
 
   async performSearch(term) {
@@ -328,18 +341,28 @@ export default class PDFViewer extends LitElement {
     this.currentPage = match.pageNum
   }
 
-  render() {
+  _renderContent() {
+    if (this.error) {
+      return this._renderError()
+    }
+
+    if (this.loading) {
+      return this._renderLoading()
+    }
+
     return html`
-      <div class="pdf-viewer-container">
-        <rm-pdf-toolbar>
-          <slot name="close-button" slot="close-button"></slot>
-        </rm-pdf-toolbar>
-        ${this.error ? this._renderError() : html`
-          <div class="content-container">
-            <rm-pdf-sidebar></rm-pdf-sidebar>
-            <rm-pdf-canvas></rm-pdf-canvas>
-          </div>
-        `}
+      <div class="content-container">
+        <rm-pdf-sidebar></rm-pdf-sidebar>
+        <rm-pdf-canvas></rm-pdf-canvas>
+      </div>
+    `
+  }
+
+  _renderLoading() {
+    return html`
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading PDF...</p>
       </div>
     `
   }
@@ -362,8 +385,15 @@ export default class PDFViewer extends LitElement {
     `
   }
 
-  _handleRetry() {
-    this.loadPDF()
+  render() {
+    return html`
+      <div class="pdf-viewer-container">
+        <rm-pdf-toolbar>
+          <slot name="close-button" slot="close-button"></slot>
+        </rm-pdf-toolbar>
+        ${this._renderContent()}
+      </div>
+    `
   }
 }
 

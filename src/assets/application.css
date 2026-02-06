@@ -126,11 +126,29 @@ body {
 
 .controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
   padding: 40px 20px;
+  gap: 40px;
+}
+
+.custom-close-btn {
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.custom-close-btn:hover {
+  background: #059669;
   gap: 40px;
   flex-wrap: wrap;
 }

@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-<!--    <link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spider Web Components - PDF Viewer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +26,12 @@
     <div class="controls">
       <div class="thumbnail-wrapper" id="thumbnail-wrapper">
         <canvas id="thumbnail-canvas"></canvas>
-        <div class="thumbnail-label">Click to Open PDF</div>
+        <div class="thumbnail-label">Default</div>
+      </div>
+
+      <div class="thumbnail-wrapper" id="thumbnail-wrapper-custom">
+        <canvas id="thumbnail-canvas-custom"></canvas>
+        <div class="thumbnail-label">Custom Close Button</div>
       </div>
 
       <div class="thumbnail-wrapper error-thumbnail" id="error-thumbnail">
@@ -43,6 +47,12 @@
 
     <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89"></rm-pdf-viewer>
 
+    <rm-pdf-viewer id="viewer-custom" src="/data/the-veldt.pdf" theme-hue="142" theme-saturation="76">
+      <button slot="close-button" class="custom-close-btn">
+        ← Back to Demos
+      </button>
+    </rm-pdf-viewer>
+
     <script type="module">
       import * as pdfjsLib from 'pdfjs-dist';
       import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
@@ -50,13 +60,16 @@
       pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
       const viewer = document.getElementById('viewer');
+      const viewerCustom = document.getElementById('viewer-custom');
       const thumbnailWrapper = document.getElementById('thumbnail-wrapper');
+      const thumbnailWrapperCustom = document.getElementById('thumbnail-wrapper-custom');
       const canvas = document.getElementById('thumbnail-canvas');
       const errorThumbnail = document.getElementById('error-thumbnail');
       const hueSlider = document.getElementById('hue-slider');
       const hueValue = document.getElementById('hue-value');
+      const canvasCustom = document.getElementById('thumbnail-canvas-custom');
 
-      async function renderThumbnail() {
+      async function renderThumbnail(canvasEl) {
         try {
           const pdfSrc = '/data/the-veldt.pdf';
           const loadingTask = pdfjsLib.getDocument(pdfSrc);
@@ -66,10 +79,10 @@
           const scale = 0.5;
           const viewport = page.getViewport({ scale });
 
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
+          canvasEl.width = viewport.width;
+          canvasEl.height = viewport.height;
 
-          const context = canvas.getContext('2d');
+          const context = canvasEl.getContext('2d');
           const renderContext = {
             canvasContext: context,
             viewport: viewport
@@ -91,13 +104,24 @@
         viewer.open = true;
       });
 
+      thumbnailWrapperCustom.addEventListener('click', () => {
+        viewerCustom.open = true
+      })
+
+      const customCloseBtn = document.querySelector('.custom-close-btn')
+      customCloseBtn.addEventListener('click', () => {
+        viewerCustom.open = false
+      })
+
+      renderThumbnail(canvas)
+      renderThumbnail(canvasCustom)
       hueSlider.addEventListener('input', (e) => {
         const hue = e.target.value;
         viewer.themeHue = parseInt(hue);
         hueValue.textContent = `${hue}°`;
       });
 
-      renderThumbnail();
+      // renderThumbnail();
     </script>
   </body>
 </html>

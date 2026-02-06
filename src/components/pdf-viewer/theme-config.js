@@ -1,41 +1,51 @@
-export const updateThemeColors = (element, hue = 217, saturation = 89) => {
-  element.style.setProperty('--theme-primary', `hsl(${hue}, ${saturation}%, 50%)`)
-  element.style.setProperty('--theme-primary-light', `hsl(${hue}, ${saturation}%, 90%)`)
-  element.style.setProperty('--theme-primary-lighter', `hsl(${hue}, ${saturation}%, 95%)`)
-  element.style.setProperty('--theme-primary-dark', `hsl(${hue}, ${saturation}%, 40%)`)
-  element.style.setProperty('--theme-primary-darker', `hsl(${hue}, ${saturation}%, 30%)`)
-  element.style.setProperty('--theme-primary-transparent', `hsla(${hue}, ${saturation}%, 50%, 70%)`)
-  element.style.setProperty('--theme-primary-very-transparent', `hsla(${hue}, ${saturation}%, 50%, 20%)`)
+export const createThemeStyleSheet = (hue = 217, saturation = 89) => {
+  const css = `
+    :host {
+      --theme-primary: light-dark(hsl(${hue}, ${saturation}%, 50%), hsl(${hue}, ${saturation}%, 60%));
+      --theme-primary-light: light-dark(hsl(${hue}, ${saturation}%, 90%), hsl(${hue}, ${saturation}%, 30%));
+      --theme-primary-lighter: light-dark(hsl(${hue}, ${saturation}%, 95%), hsl(${hue}, ${saturation}%, 20%));
+      --theme-primary-dark: light-dark(hsl(${hue}, ${saturation}%, 40%), hsl(${hue}, ${saturation}%, 70%));
+      --theme-primary-darker: light-dark(hsl(${hue}, ${saturation}%, 30%), hsl(${hue}, ${saturation}%, 80%));
+      --theme-primary-transparent: light-dark(hsla(${hue}, ${saturation}%, 50%, 70%), hsla(${hue}, ${saturation}%, 60%, 70%));
+      --theme-primary-very-transparent: light-dark(hsla(${hue}, ${saturation}%, 50%, 20%), hsla(${hue}, ${saturation}%, 60%, 20%));
 
-  element.style.setProperty('--theme-neutral-50', `hsl(${hue}, 15%, 97%)`)
-  element.style.setProperty('--theme-neutral-100', `hsl(${hue}, 25%, 95%)`)
-  element.style.setProperty('--theme-neutral-200', 'hsl(0, 0%, 87%)')
-  element.style.setProperty('--theme-neutral-300', 'hsl(0, 0%, 80%)')
-  element.style.setProperty('--theme-neutral-400', 'hsl(0, 0%, 63%)')
-  element.style.setProperty('--theme-neutral-500', 'hsl(0, 0%, 37%)')
-  element.style.setProperty('--theme-neutral-600', 'hsl(0, 0%, 20%)')
+      --theme-neutral-50: light-dark(hsl(${hue}, 15%, 97%), hsl(${hue}, 15%, 10%));
+      --theme-neutral-100: light-dark(hsl(${hue}, 25%, 95%), hsl(${hue}, 15%, 15%));
+      --theme-neutral-200: light-dark(hsl(0, 0%, 87%), hsl(0, 0%, 25%));
+      --theme-neutral-300: light-dark(hsl(0, 0%, 80%), hsl(0, 0%, 35%));
+      --theme-neutral-400: light-dark(hsl(0, 0%, 63%), hsl(0, 0%, 50%));
+      --theme-neutral-500: light-dark(hsl(0, 0%, 37%), hsl(0, 0%, 63%));
+      --theme-neutral-600: light-dark(hsl(0, 0%, 20%), hsl(0, 0%, 85%));
 
-  element.style.setProperty('--theme-border', 'hsl(0, 0%, 87%)')
-  element.style.setProperty('--theme-shadow', 'rgba(0, 0, 0, 0.1)')
+      --theme-border: light-dark(hsl(0, 0%, 87%), hsl(0, 0%, 30%));
+      --theme-shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+      
+      --theme-icon-color: light-dark(hsl(0, 0%, 20%), hsl(0, 0%, 85%));
 
-  element.style.setProperty('--theme-spacing-xxs', '0.15rem')
-  element.style.setProperty('--theme-spacing-xs', '0.25rem')
-  element.style.setProperty('--theme-spacing-sm', '0.5rem')
-  element.style.setProperty('--theme-spacing-md', '1rem')
-  element.style.setProperty('--theme-spacing-lg', '2rem')
-  element.style.setProperty('--theme-spacing-xl', '3rem')
+      --theme-spacing-xxs: 0.15rem;
+      --theme-spacing-xs: 0.25rem;
+      --theme-spacing-sm: 0.5rem;
+      --theme-spacing-md: 1rem;
+      --theme-spacing-lg: 2rem;
+      --theme-spacing-xl: 3rem;
 
-  element.style.setProperty('--theme-border-radius-sm', '2px')
-  element.style.setProperty('--theme-border-radius-md', '4px')
-  element.style.setProperty('--theme-border-radius-lg', '8px')
+      --theme-border-radius-sm: 2px;
+      --theme-border-radius-md: 4px;
+      --theme-border-radius-lg: 8px;
 
-  element.style.setProperty('--theme-border-width-sm', '1px')
-  element.style.setProperty('--theme-border-width-md', '2px')
+      --theme-border-width-sm: 1px;
+      --theme-border-width-md: 2px;
 
-  element.style.setProperty('--theme-font-size-sm', '12px')
-  element.style.setProperty('--theme-font-size-md', '14px')
-  element.style.setProperty('--theme-font-size-base', '0.9rem')
+      --theme-font-size-sm: 12px;
+      --theme-font-size-md: 14px;
+      --theme-font-size-base: 0.9rem;
 
-  element.style.setProperty('--theme-icon-size-md', '16px')
-  element.style.setProperty('--theme-icon-size-lg', '18px')
+      --theme-icon-size-md: 16px;
+      --theme-icon-size-lg: 18px;
+    }
+  `
+
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(css)
+  return sheet
 }
