@@ -125,7 +125,7 @@ export default class PDFPage extends PDFViewerComponent {
         const itemEnd = charPosition + normalizedText.length
 
         const overlappingMatches = pageMatches.filter(match => {
-          const matchEnd = match.charIndex + this.searchTerm.length
+          const matchEnd = match.charIndex + (match.length || this.searchTerm.length)
           return match.charIndex < itemEnd && matchEnd > itemStart
         })
 
@@ -151,7 +151,8 @@ export default class PDFPage extends PDFViewerComponent {
 
     matches.forEach(match => {
       const relativeStart = Math.max(0, match.charIndex - itemStart)
-      const relativeEnd = Math.min(text.length, match.charIndex + this.searchTerm.length - itemStart)
+      const matchLength = match.length || this.searchTerm.length
+      const relativeEnd = Math.min(text.length, match.charIndex + matchLength - itemStart)
 
       if (relativeStart > currentPos) {
         segments.push({ text: text.substring(currentPos, relativeStart), highlight: false })

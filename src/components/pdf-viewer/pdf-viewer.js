@@ -85,20 +85,58 @@ export default class PDFViewer extends LitElement {
   _handleKeyDown(event) {
     if (!this.open) return
 
-    if (event.key === 'Escape') {
-      if (this.searchOpen) {
-        this.searchOpen = false
-        event.preventDefault()
-      } else if (this.escapeClosesViewer) {
-        this.open = false
-        event.preventDefault()
+    const target = event.composedPath()[0]
+    const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA'
+
+    if (isInputField && event.key !== 'Escape') return
+
+    const shortcuts = {
+      'Escape': () => {
+        if (this.searchOpen) {
+          this.searchOpen = false
+          return true
+        } else if (this.escapeClosesViewer) {
+          this.open = false
+          return true
+        }
+        return false
+      },
+      '/': () => {
+        if (!this.searchOpen) {
+          this.searchOpen = true
+          return true
+        }
+        return false
+      },
+      's': () => {
+        this.sidebarCollapsed = !this.sidebarCollapsed
+        return true
+      },
+      'p': () => {
+        this.printPDF()
+        return true
+      },
+      'ArrowUp': () => {
+        if (this.currentPage > 1) {
+          this.shouldScroll = true
+          this.currentPage--
+          return true
+        }
+        return false
+      },
+      'ArrowDown': () => {
+        if (this.currentPage < this.totalPages) {
+          this.shouldScroll = true
+          this.currentPage++
+          return true
+        }
+        return false
       }
-    } else if (event.key === '/' && !this.searchOpen) {
-      const target = event.target
-      if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
-        this.searchOpen = true
-        event.preventDefault()
-      }
+    }
+
+    const handler = shortcuts[event.key]
+    if (handler && handler()) {
+      event.preventDefault()
     }
   }
 
@@ -387,7 +425,8 @@ export default class PDFViewer extends LitElement {
     if (!term || !this.pdfDoc) return
 
     const matches = []
-    const searchTermLower = term.toLowerCase()
+    const normalizedTerm = normalizeText(term)
+    const searchTermLower = normalizedTerm.toLowerCase()
 
     for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
       try {
@@ -413,7 +452,8 @@ export default class PDFViewer extends LitElement {
           matches.push({
             pageNum,
             charIndex: index,
-            text: term
+            text: term,
+            length: normalizedTerm.length
           })
           index = pageTextLower.indexOf(searchTermLower, index + 1)
         }
