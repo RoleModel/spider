@@ -35,6 +35,10 @@ yarn add @rolemodel/spider
 </rm-pdf-viewer>
 ```
 
+## Testing
+
+The test suite uses [Vitest](https://vitest.dev/) with @open-wc/testing for web component testing. Run `yarn test` to execute all tests, or use `yarn test --watch` for watch mode. Tests include unit tests for individual components, helper utilities, and integration tests for complete user workflows. Coverage reports can be generated with `yarn test:coverage`.
+
 ## Properties
 
 | Property | Type | Default | Description |
