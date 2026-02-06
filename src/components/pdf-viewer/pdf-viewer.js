@@ -52,7 +52,7 @@ export default class PDFViewer extends LitElement {
     this.currentPage = 1
     this.totalPages = 0
     this.scale = 1.5
-    this.sidebarCollapsed = false
+    this.sidebarCollapsed = window.innerWidth <= 512
     this.shouldScroll = false
     this.searchTerm = ''
     this.searchMatches = []
@@ -68,24 +68,16 @@ export default class PDFViewer extends LitElement {
     })
 
     this._handleKeyDown = this._handleKeyDown.bind(this)
-    this._handleResize = this._handleResize.bind(this)
   }
 
   connectedCallback() {
     super.connectedCallback()
     document.addEventListener('keydown', this._handleKeyDown)
-    window.addEventListener('resize', this._handleResize)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     document.removeEventListener('keydown', this._handleKeyDown)
-    window.removeEventListener('resize', this._handleResize)
-  }
-
-  _handleResize() {
-    if (!this.open || !this.pdfDoc) return
-    this.shouldScroll = true
   }
 
   _handleKeyDown(event) {
@@ -260,7 +252,7 @@ export default class PDFViewer extends LitElement {
       const canvas = this.shadowRoot.querySelector('rm-pdf-canvas')
       if (!canvas) return
 
-      const container = canvas.shadowRoot.querySelector('.canvas-container')
+      const container = canvas.shadowRoot?.querySelector('.canvas-container')
       if (!container) return
 
       const containerWidth = container.clientWidth
@@ -273,14 +265,14 @@ export default class PDFViewer extends LitElement {
       const availableHeight = containerHeight - (padding * 2) - gap
 
       const viewport = page.getViewport({ scale: 1 })
-      
+
       const scaleX = availableWidth / viewport.width
       const scaleY = availableHeight / viewport.height
-      
+
       const newScale = Math.min(scaleX, scaleY)
 
       this.scale = Math.max(0.5, Math.min(newScale, 3))
-      
+
       this.shouldScroll = true
     } catch (error) {
       console.error('Error fitting PDF to screen:', error)
@@ -348,14 +340,55 @@ export default class PDFViewer extends LitElement {
       if (pageToLoad > 1) {
         this.shouldScroll = true
       }
+
+      this.loading = false
+
+      requestAnimationFrame(() => {
+        this._calculateInitialScale(pageToLoad)
+      })
     } catch (error) {
       console.error('Error loading PDF:', error)
       this.error = {
         message: error.message || 'Failed to load PDF',
         name: error.name || 'PDFError'
       }
-    } finally {
       this.loading = false
+    }
+  }
+
+  async _calculateInitialScale(pageNum) {
+    try {
+      const page = await this.pdfDoc.getPage(pageNum)
+
+      await this.updateComplete
+
+      const canvas = this.shadowRoot.querySelector('rm-pdf-canvas')
+      if (!canvas) return
+
+      await canvas.updateComplete
+
+      const container = canvas.shadowRoot?.querySelector('.canvas-container')
+      if (!container) return
+
+      const containerWidth = container.clientWidth
+      const containerHeight = container.clientHeight
+      const isMobile = window.innerWidth <= 512
+      const padding = isMobile ? 0 : 32
+      const gap = isMobile ? 0 : 16
+
+      const availableWidth = containerWidth - (padding * 2)
+      const availableHeight = containerHeight - (padding * 2) - gap
+
+      const viewport = page.getViewport({ scale: 1 })
+
+      const scaleX = availableWidth / viewport.width
+      const scaleY = availableHeight / viewport.height
+
+      const newScale = Math.min(scaleX, scaleY)
+
+      this.scale = Math.max(0.5, Math.min(newScale, 3))
+    } catch (error) {
+      console.error('Error calculating initial scale:', error)
     }
   }
 
