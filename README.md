@@ -37,7 +37,7 @@ yarn add @rolemodel/spider
 
 ## Testing
 
-The test suite uses [Vitest](https://vitest.dev/) with @open-wc/testing for web component testing. Tests include unit tests for individual components, helper utilities, and integration tests for complete user workflows.
+The test suite uses [Vitest](https://vitest.dev/) with @open-wc/testing for web component testing. It includes unit tests for individual components, helper utilities, and integration tests for complete user workflows.
 
 Run tests with:
 - `yarn test` - Execute all tests
