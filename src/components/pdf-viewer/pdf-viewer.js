@@ -20,6 +20,7 @@ export default class PDFViewer extends LitElement {
       initialPage: { type: Number, attribute: 'initial-page' },
       themeHue: { type: Number, attribute: 'theme-hue' },
       themeSaturation: { type: Number, attribute: 'theme-saturation' },
+      escapeClosesViewer: { type: Boolean, attribute: 'escape-closes-viewer' },
       pdfDoc: { type: Object, state: true },
       currentPage: { type: Number, state: true },
       totalPages: { type: Number, state: true },
@@ -46,6 +47,7 @@ export default class PDFViewer extends LitElement {
     this.initialPage = 1
     this.themeHue = 217
     this.themeSaturation = 89
+    this.escapeClosesViewer = false
     this.pdfDoc = null
     this.currentPage = 1
     this.totalPages = 0
@@ -84,10 +86,11 @@ export default class PDFViewer extends LitElement {
     if (event.key === 'Escape') {
       if (this.searchOpen) {
         this.searchOpen = false
-      } else {
+        event.preventDefault()
+      } else if (this.escapeClosesViewer) {
         this.open = false
+        event.preventDefault()
       }
-      event.preventDefault()
     } else if (event.key === '/' && !this.searchOpen) {
       const target = event.target
       if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {

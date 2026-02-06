@@ -99,6 +99,8 @@ export default class PDFToolbar extends PDFViewerComponent {
       this.context?.nextMatch()
     } else if (e.key === 'Escape') {
       this.closeSearch()
+      e.preventDefault()
+      e.stopPropagation()
     }
   }
 
