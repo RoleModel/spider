@@ -44,6 +44,33 @@ export default css`
     }
   }
 
+  .btn--search {
+    background: var(--theme-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--theme-spacing-xs, 0.25rem);
+  }
+
+  .btn--search--active {
+    background: var(--theme-primary-50, #e6f0ff);
+    color: var(--theme-primary, #0066cc);
+  }
+
+  .btn--search--active .btn--search-badge {
+    background: var(--theme-primary, #0066cc);
+    color: var(--theme-neutral-50, #ffffff);
+  }
+
+  .btn--search-badge {
+    background: var(--theme-neutral-200);
+    color: var(--theme-neutral-600);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 3px;
+    border-radius: var(--theme-border-radius-sm, 2px);
+  }
+
   button:hover:not(:disabled) {
     background: var(--theme-neutral-100, #e9e9e9);
   }

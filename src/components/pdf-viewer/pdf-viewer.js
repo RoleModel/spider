@@ -29,6 +29,7 @@ export default class PDFViewer extends LitElement {
       searchTerm: { type: String, state: true },
       searchMatches: { type: Array, state: true },
       currentMatchIndex: { type: Number, state: true },
+      searchOpen: { type: Boolean, state: true },
       error: { type: Object, state: true },
       themeStyleSheet: { type: Object, state: true }
     }
@@ -54,6 +55,7 @@ export default class PDFViewer extends LitElement {
     this.searchTerm = ''
     this.searchMatches = []
     this.currentMatchIndex = -1
+    this.searchOpen = false
     this.error = null
     this.loading = false
     this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
@@ -62,6 +64,37 @@ export default class PDFViewer extends LitElement {
       context: pdfContext,
       initialValue: this._createContextValue()
     })
+
+    this._handleKeyDown = this._handleKeyDown.bind(this)
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    document.addEventListener('keydown', this._handleKeyDown)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    document.removeEventListener('keydown', this._handleKeyDown)
+  }
+
+  _handleKeyDown(event) {
+    if (!this.open) return
+
+    if (event.key === 'Escape') {
+      if (this.searchOpen) {
+        this.searchOpen = false
+      } else {
+        this.open = false
+      }
+      event.preventDefault()
+    } else if (event.key === '/' && !this.searchOpen) {
+      const target = event.target
+      if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+        this.searchOpen = true
+        event.preventDefault()
+      }
+    }
   }
 
   _createContextValue() {
@@ -75,6 +108,7 @@ export default class PDFViewer extends LitElement {
       searchTerm: this.searchTerm,
       searchMatches: this.searchMatches,
       currentMatchIndex: this.currentMatchIndex,
+      searchOpen: this.searchOpen,
       open: this.open,
       setCurrentPage: (page) => {
         this.currentPage = page
@@ -111,6 +145,12 @@ export default class PDFViewer extends LitElement {
       },
       toggleSidebar: () => {
         this.sidebarCollapsed = !this.sidebarCollapsed
+      },
+      openSearch: () => {
+        this.searchOpen = true
+      },
+      closeSearch: () => {
+        this.searchOpen = false
       },
       search: async (term) => {
         await this.performSearch(term)
@@ -209,6 +249,7 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('searchTerm') ||
       changedProperties.has('searchMatches') ||
       changedProperties.has('currentMatchIndex') ||
+      changedProperties.has('searchOpen') ||
       changedProperties.has('open')
     ) {
       this._provider.setValue(this._createContextValue())

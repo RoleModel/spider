@@ -18,15 +18,11 @@ export default class PDFToolbar extends PDFViewerComponent {
     return styles
   }
 
-  static get properties() {
-    return {
-      searchOpen: { type: Boolean, state: true }
+  updated(changedProperties) {
+    super.updated(changedProperties)
+    if (this.context?.searchOpen && !changedProperties.get('context')?.searchOpen) {
+      this._focusSearchInput()
     }
-  }
-
-  constructor() {
-    super()
-    this.searchOpen = false
   }
 
   previousPage() {
@@ -48,17 +44,18 @@ export default class PDFToolbar extends PDFViewerComponent {
   }
 
   toggleSearch() {
-    this.searchOpen = !this.searchOpen
-
-    if (this.searchOpen) {
-      this._focusSearchInput()
-    } else {
+    const isOpen = this.context?.searchOpen
+    if (isOpen) {
+      this.context?.closeSearch()
       this._clearSearch()
+    } else {
+      this.context?.openSearch()
+      this._focusSearchInput()
     }
   }
 
   closeSearch() {
-    this.searchOpen = false
+    this.context?.closeSearch()
     this._clearSearch()
   }
 
@@ -116,7 +113,7 @@ export default class PDFToolbar extends PDFViewerComponent {
   render() {
     if (!this.context) return html``
 
-    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex } = this.context
+    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex, searchOpen } = this.context
 
     const matchCount = searchMatches?.length || 0
     const matchDisplay = matchCount > 0 ? `${currentMatchIndex + 1} of ${matchCount}` : '0 of 0'
@@ -168,8 +165,9 @@ export default class PDFToolbar extends PDFViewerComponent {
         </div>
 
         <div class="toolbar__section">
-          <button class="btn--icon" @click="${this.toggleSearch}">
+          <button class="btn--icon btn--search ${searchOpen ? 'btn--search--active' : ''}" @click="${this.toggleSearch}">
             ${unsafeSVG(searchIcon)}
+            <span class="btn--search-badge">/</span>
           </button>
 
           <button class="btn--icon" @click="${this.print}" title="Print">
@@ -186,7 +184,7 @@ export default class PDFToolbar extends PDFViewerComponent {
           </slot>
         </div>
 
-        <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
+        <div class="search-dropdown ${searchOpen ? 'search-dropdown--open' : ''}">
           <input
             id="search-input"
             type="text"
