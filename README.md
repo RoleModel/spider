@@ -51,6 +51,10 @@ yarn add @rolemodel/spider
 |------|-------------|
 | `close-button` | Custom close button element |
 
+## Testing
+
+The test suite uses [Vitest](https://vitest.dev/) with @open-wc/testing for web component testing. Run tests with `yarn test`, or use `yarn test --watch` for watch mode and `yarn test:coverage` for coverage reports.
+
 ## License
 
 MIT
