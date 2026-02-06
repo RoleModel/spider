@@ -110,6 +110,8 @@ describe('PDF Viewer Integration Tests', () => {
     })
 
     it('should handle error states gracefully', async () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
       pdfjsLib.getDocument.mockReturnValue({
         promise: Promise.reject(new Error('Network error'))
       })
@@ -123,6 +125,8 @@ describe('PDF Viewer Integration Tests', () => {
 
       expect(element.error).toBeDefined()
       expect(element.pdfDoc).toBeNull()
+
+      consoleErrorSpy.mockRestore()
     })
 
     it('should handle rapid page changes', async () => {

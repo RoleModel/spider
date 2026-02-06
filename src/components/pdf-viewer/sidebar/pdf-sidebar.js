@@ -17,11 +17,21 @@ export default class PDFSidebar extends PDFViewerComponent {
   constructor() {
     super()
     this._lastScrolledPage = 1
+    this._needsScroll = false
+  }
+
+  willUpdate(changedProperties) {
+    super.willUpdate(changedProperties)
+
+    if (this.context?.currentPage !== this._lastScrolledPage) {
+      this._lastScrolledPage = this.context.currentPage
+      this._needsScroll = true
+    }
   }
 
   updated() {
-    if (this.context?.currentPage !== this._lastScrolledPage) {
-      this._lastScrolledPage = this.context.currentPage
+    if (this._needsScroll) {
+      this._needsScroll = false
       this.scrollToActiveThumbnail()
     }
   }

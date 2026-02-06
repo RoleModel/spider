@@ -33,6 +33,7 @@ export function createMockPage(pageNumber = 1) {
       width: viewport.width * scale,
       height: viewport.height * scale,
       scale,
+      transform: [scale, 0, 0, scale, 0, 0],
     })),
     render: vi.fn(() => ({
       promise: Promise.resolve(),
