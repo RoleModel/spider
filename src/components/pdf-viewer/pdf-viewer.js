@@ -325,6 +325,7 @@ export default class PDFViewer extends LitElement {
     if (!term || !this.pdfDoc) return
 
     const matches = []
+    const searchTermLower = term.toLowerCase()
 
     for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
       try {
@@ -343,7 +344,8 @@ export default class PDFViewer extends LitElement {
           pageText += normalizedText
         })
 
-        let index = pageText.indexOf(term)
+        const pageTextLower = pageText.toLowerCase()
+        let index = pageTextLower.indexOf(searchTermLower)
 
         while (index !== -1) {
           matches.push({
@@ -351,7 +353,7 @@ export default class PDFViewer extends LitElement {
             charIndex: index,
             text: term
           })
-          index = pageText.indexOf(term, index + 1)
+          index = pageTextLower.indexOf(searchTermLower, index + 1)
         }
       } catch (error) {
         console.error(`Error searching page ${pageNum}:`, error)
