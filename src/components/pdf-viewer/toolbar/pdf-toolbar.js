@@ -3,8 +3,8 @@ import { unsafeSVG } from 'lit/directives/unsafe-svg.js'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import styles from './pdf-toolbar.styles.js'
 import closeIcon from '../../../assets/icons/close.svg?raw'
-import arrowLeftIcon from '../../../assets/icons/arrow-left.svg?raw'
-import arrowRightIcon from '../../../assets/icons/arrow-right.svg?raw'
+import arrowUpIcon from '../../../assets/icons/arrow-up.svg?raw'
+import arrowDownIcon from '../../../assets/icons/arrow-down.svg?raw'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg?raw'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg?raw'
 import searchIcon from '../../../assets/icons/search.svg?raw'
@@ -136,7 +136,7 @@ export default class PDFToolbar extends PDFViewerComponent {
 
           <div class="toolbar__section-group">
             <button class="btn--icon" @click="${this.previousPage}" ?disabled="${currentPage <= 1}">
-              ${unsafeSVG(arrowLeftIcon)}
+              ${unsafeSVG(arrowUpIcon)}
             </button>
             <span class="page-info">
               <input
@@ -150,7 +150,7 @@ export default class PDFToolbar extends PDFViewerComponent {
               /> of ${totalPages}
             </span>
             <button class="btn--icon" @click="${this.nextPage}" ?disabled="${currentPage >= totalPages}">
-              ${unsafeSVG(arrowRightIcon)}
+              ${unsafeSVG(arrowDownIcon)}
             </button>
           </div>
         </div>
@@ -198,10 +198,10 @@ export default class PDFToolbar extends PDFViewerComponent {
           />
           <span class="search-info">${matchDisplay}</span>
           <button class="btn--icon" @click="${this.previousSearchMatch}" ?disabled="${matchCount === 0}">
-            ${unsafeSVG(arrowLeftIcon)}
+            ${unsafeSVG(arrowUpIcon)}
           </button>
           <button class="btn--icon" @click="${this.nextSearchMatch}" ?disabled="${matchCount === 0}">
-            ${unsafeSVG(arrowRightIcon)}
+            ${unsafeSVG(arrowDownIcon)}
           </button>
           <button class="btn--icon" @click="${this.closeSearch}">
             ${unsafeSVG(closeIcon)}
