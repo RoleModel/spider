@@ -32,7 +32,8 @@ export default class PDFViewer extends LitElement {
       currentMatchIndex: { type: Number, state: true },
       searchOpen: { type: Boolean, state: true },
       error: { type: Object, state: true },
-      themeStyleSheet: { type: Object, state: true }
+      themeStyleSheet: { type: Object, state: true },
+      fitToScreenScale: { type: Number, state: true }
     }
   }
 
@@ -61,6 +62,7 @@ export default class PDFViewer extends LitElement {
     this.error = null
     this.loading = false
     this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
+    this.fitToScreenScale = null
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
@@ -244,39 +246,11 @@ export default class PDFViewer extends LitElement {
     }
   }
 
-  async fitPDFToScreen() {
-    if (!this.pdfDoc) return
+  fitPDFToScreen() {
+    if (!this.fitToScreenScale) return
 
-    try {
-      const page = await this.pdfDoc.getPage(this.currentPage)
-      const canvas = this.shadowRoot.querySelector('rm-pdf-canvas')
-      if (!canvas) return
-
-      const container = canvas.shadowRoot?.querySelector('.canvas-container')
-      if (!container) return
-
-      const containerWidth = container.clientWidth
-      const containerHeight = container.clientHeight
-      const isMobile = window.innerWidth <= 512
-      const padding = isMobile ? 0 : 32
-      const gap = isMobile ? 0 : 16
-
-      const availableWidth = containerWidth - (padding * 2)
-      const availableHeight = containerHeight - (padding * 2) - gap
-
-      const viewport = page.getViewport({ scale: 1 })
-
-      const scaleX = availableWidth / viewport.width
-      const scaleY = availableHeight / viewport.height
-
-      const newScale = Math.min(scaleX, scaleY)
-
-      this.scale = Math.max(0.5, Math.min(newScale, 3))
-
-      this.shouldScroll = true
-    } catch (error) {
-      console.error('Error fitting PDF to screen:', error)
-    }
+    this.scale = this.fitToScreenScale
+    this.shouldScroll = true
   }
 
   willUpdate(changedProperties) {
@@ -373,20 +347,29 @@ export default class PDFViewer extends LitElement {
       const containerWidth = container.clientWidth
       const containerHeight = container.clientHeight
       const isMobile = window.innerWidth <= 512
-      const padding = isMobile ? 0 : 32
+      const basePadding = isMobile ? 0 : 32
       const gap = isMobile ? 0 : 16
-
-      const availableWidth = containerWidth - (padding * 2)
-      const availableHeight = containerHeight - (padding * 2) - gap
+      const maxPadding = 100
 
       const viewport = page.getViewport({ scale: 1 })
 
-      const scaleX = availableWidth / viewport.width
-      const scaleY = availableHeight / viewport.height
+      const availableWidthWithBase = containerWidth - (basePadding * 2)
+      const availableHeightWithBase = containerHeight - (basePadding * 2) - gap
 
-      const newScale = Math.min(scaleX, scaleY)
+      const scaleX = availableWidthWithBase / viewport.width
+      const scaleY = availableHeightWithBase / viewport.height
 
-      this.scale = Math.max(0.5, Math.min(newScale, 3))
+      let newScale = Math.min(scaleX, scaleY)
+
+      const finalWidth = viewport.width * newScale
+      const horizontalPadding = (containerWidth - finalWidth) / 2
+      if (horizontalPadding > maxPadding) {
+        newScale = (containerWidth - (maxPadding * 2)) / viewport.width
+      }
+
+      const finalScale = Math.max(0.5, Math.min(newScale, 3))
+      this.scale = finalScale
+      this.fitToScreenScale = finalScale
     } catch (error) {
       console.error('Error calculating initial scale:', error)
     }
