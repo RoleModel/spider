@@ -172,7 +172,7 @@ export default css`
     padding: var(--theme-spacing-sm, 0.5rem);
     border: var(--theme-border-width-sm, 1px) solid var(--theme-neutral-300, #ccc);
     border-radius: var(--theme-border-radius-md, 4px);
-    font-size: var(--theme-font-size-base, 0.9rem);
+    font-size: var(--theme-font-size-md, 14px);
     outline: none;
   }
 
