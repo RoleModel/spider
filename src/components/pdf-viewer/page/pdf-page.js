@@ -106,12 +106,12 @@ export default class PDFPage extends PDFViewerComponent {
         )
 
         const fontSize = Math.sqrt((tx[2] * tx[2]) + (tx[3] * tx[3]))
-        const fontHeight = fontSize
+        const fontAscent = fontSize * 0.8
 
         const textDiv = document.createElement('div')
         textDiv.style.position = 'absolute'
         textDiv.style.left = `${tx[4]}px`
-        textDiv.style.top = `${tx[5] - fontHeight}px`
+        textDiv.style.top = `${tx[5] - fontAscent}px`
         textDiv.style.fontSize = `${fontSize}px`
         textDiv.style.fontFamily = textItem.fontName || 'sans-serif'
 

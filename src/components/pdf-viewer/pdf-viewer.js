@@ -20,6 +20,7 @@ export default class PDFViewer extends LitElement {
       initialPage: { type: Number, attribute: 'initial-page' },
       themeHue: { type: Number, attribute: 'theme-hue' },
       themeSaturation: { type: Number, attribute: 'theme-saturation' },
+      escapeClosesViewer: { type: Boolean, attribute: 'escape-closes-viewer' },
       pdfDoc: { type: Object, state: true },
       currentPage: { type: Number, state: true },
       totalPages: { type: Number, state: true },
@@ -29,8 +30,10 @@ export default class PDFViewer extends LitElement {
       searchTerm: { type: String, state: true },
       searchMatches: { type: Array, state: true },
       currentMatchIndex: { type: Number, state: true },
+      searchOpen: { type: Boolean, state: true },
       error: { type: Object, state: true },
-      themeStyleSheet: { type: Object, state: true }
+      themeStyleSheet: { type: Object, state: true },
+      fitToScreenScale: { type: Number, state: true }
     }
   }
 
@@ -45,23 +48,58 @@ export default class PDFViewer extends LitElement {
     this.initialPage = 1
     this.themeHue = 217
     this.themeSaturation = 89
+    this.escapeClosesViewer = false
     this.pdfDoc = null
     this.currentPage = 1
     this.totalPages = 0
     this.scale = 1.5
-    this.sidebarCollapsed = false
+    this.sidebarCollapsed = window.innerWidth <= 512
     this.shouldScroll = false
     this.searchTerm = ''
     this.searchMatches = []
     this.currentMatchIndex = -1
+    this.searchOpen = false
     this.error = null
     this.loading = false
     this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
+    this.fitToScreenScale = null
 
     this._provider = new ContextProvider(this, {
       context: pdfContext,
       initialValue: this._createContextValue()
     })
+
+    this._handleKeyDown = this._handleKeyDown.bind(this)
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    document.addEventListener('keydown', this._handleKeyDown)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    document.removeEventListener('keydown', this._handleKeyDown)
+  }
+
+  _handleKeyDown(event) {
+    if (!this.open) return
+
+    if (event.key === 'Escape') {
+      if (this.searchOpen) {
+        this.searchOpen = false
+        event.preventDefault()
+      } else if (this.escapeClosesViewer) {
+        this.open = false
+        event.preventDefault()
+      }
+    } else if (event.key === '/' && !this.searchOpen) {
+      const target = event.target
+      if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+        this.searchOpen = true
+        event.preventDefault()
+      }
+    }
   }
 
   _createContextValue() {
@@ -75,6 +113,7 @@ export default class PDFViewer extends LitElement {
       searchTerm: this.searchTerm,
       searchMatches: this.searchMatches,
       currentMatchIndex: this.currentMatchIndex,
+      searchOpen: this.searchOpen,
       open: this.open,
       setCurrentPage: (page) => {
         this.currentPage = page
@@ -103,6 +142,9 @@ export default class PDFViewer extends LitElement {
           this.scale -= 0.25
         }
       },
+      fitToScreen: () => {
+        this.fitPDFToScreen()
+      },
       print: async () => {
         await this.printPDF()
       },
@@ -111,6 +153,12 @@ export default class PDFViewer extends LitElement {
       },
       toggleSidebar: () => {
         this.sidebarCollapsed = !this.sidebarCollapsed
+      },
+      openSearch: () => {
+        this.searchOpen = true
+      },
+      closeSearch: () => {
+        this.searchOpen = false
       },
       search: async (term) => {
         await this.performSearch(term)
@@ -198,6 +246,13 @@ export default class PDFViewer extends LitElement {
     }
   }
 
+  fitPDFToScreen() {
+    if (!this.fitToScreenScale) return
+
+    this.scale = this.fitToScreenScale
+    this.shouldScroll = true
+  }
+
   willUpdate(changedProperties) {
     if (
       changedProperties.has('pdfDoc') ||
@@ -209,6 +264,7 @@ export default class PDFViewer extends LitElement {
       changedProperties.has('searchTerm') ||
       changedProperties.has('searchMatches') ||
       changedProperties.has('currentMatchIndex') ||
+      changedProperties.has('searchOpen') ||
       changedProperties.has('open')
     ) {
       this._provider.setValue(this._createContextValue())
@@ -258,14 +314,64 @@ export default class PDFViewer extends LitElement {
       if (pageToLoad > 1) {
         this.shouldScroll = true
       }
+
+      this.loading = false
+
+      requestAnimationFrame(() => {
+        this._calculateInitialScale(pageToLoad)
+      })
     } catch (error) {
       console.error('Error loading PDF:', error)
       this.error = {
         message: error.message || 'Failed to load PDF',
         name: error.name || 'PDFError'
       }
-    } finally {
       this.loading = false
+    }
+  }
+
+  async _calculateInitialScale(pageNum) {
+    try {
+      const page = await this.pdfDoc.getPage(pageNum)
+
+      await this.updateComplete
+
+      const canvas = this.shadowRoot.querySelector('rm-pdf-canvas')
+      if (!canvas) return
+
+      await canvas.updateComplete
+
+      const container = canvas.shadowRoot?.querySelector('.canvas-container')
+      if (!container) return
+
+      const containerWidth = container.clientWidth
+      const containerHeight = container.clientHeight
+      const isMobile = window.innerWidth <= 512
+      const basePadding = isMobile ? 0 : 32
+      const gap = isMobile ? 0 : 16
+      const maxPadding = 100
+
+      const viewport = page.getViewport({ scale: 1 })
+
+      const availableWidthWithBase = containerWidth - (basePadding * 2)
+      const availableHeightWithBase = containerHeight - (basePadding * 2) - gap
+
+      const scaleX = availableWidthWithBase / viewport.width
+      const scaleY = availableHeightWithBase / viewport.height
+
+      let newScale = Math.min(scaleX, scaleY)
+
+      const finalWidth = viewport.width * newScale
+      const horizontalPadding = (containerWidth - finalWidth) / 2
+      if (horizontalPadding > maxPadding) {
+        newScale = (containerWidth - (maxPadding * 2)) / viewport.width
+      }
+
+      const finalScale = Math.max(0.5, Math.min(newScale, 3))
+      this.scale = finalScale
+      this.fitToScreenScale = finalScale
+    } catch (error) {
+      console.error('Error calculating initial scale:', error)
     }
   }
 
@@ -281,6 +387,7 @@ export default class PDFViewer extends LitElement {
     if (!term || !this.pdfDoc) return
 
     const matches = []
+    const searchTermLower = term.toLowerCase()
 
     for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
       try {
@@ -299,7 +406,8 @@ export default class PDFViewer extends LitElement {
           pageText += normalizedText
         })
 
-        let index = pageText.indexOf(term)
+        const pageTextLower = pageText.toLowerCase()
+        let index = pageTextLower.indexOf(searchTermLower)
 
         while (index !== -1) {
           matches.push({
@@ -307,7 +415,7 @@ export default class PDFViewer extends LitElement {
             charIndex: index,
             text: term
           })
-          index = pageText.indexOf(term, index + 1)
+          index = pageTextLower.indexOf(searchTermLower, index + 1)
         }
       } catch (error) {
         console.error(`Error searching page ${pageNum}:`, error)

@@ -7,6 +7,7 @@ import arrowUpIcon from '../../../assets/icons/arrow-up.svg?raw'
 import arrowDownIcon from '../../../assets/icons/arrow-down.svg?raw'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg?raw'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg?raw'
+import fitToScreenIcon from '../../../assets/icons/fit-to-screen.svg?raw'
 import searchIcon from '../../../assets/icons/search.svg?raw'
 import printIcon from '../../../assets/icons/print.svg?raw'
 import downloadIcon from '../../../assets/icons/download.svg?raw'
@@ -18,15 +19,11 @@ export default class PDFToolbar extends PDFViewerComponent {
     return styles
   }
 
-  static get properties() {
-    return {
-      searchOpen: { type: Boolean, state: true }
+  updated(changedProperties) {
+    super.updated(changedProperties)
+    if (this.context?.searchOpen && !changedProperties.get('context')?.searchOpen) {
+      this._focusSearchInput()
     }
-  }
-
-  constructor() {
-    super()
-    this.searchOpen = false
   }
 
   previousPage() {
@@ -47,18 +44,23 @@ export default class PDFToolbar extends PDFViewerComponent {
     this.context?.zoomOut()
   }
 
-  toggleSearch() {
-    this.searchOpen = !this.searchOpen
+  fitToScreen() {
+    this.context?.fitToScreen()
+  }
 
-    if (this.searchOpen) {
-      this._focusSearchInput()
-    } else {
+  toggleSearch() {
+    const isOpen = this.context?.searchOpen
+    if (isOpen) {
+      this.context?.closeSearch()
       this._clearSearch()
+    } else {
+      this.context?.openSearch()
+      this._focusSearchInput()
     }
   }
 
   closeSearch() {
-    this.searchOpen = false
+    this.context?.closeSearch()
     this._clearSearch()
   }
 
@@ -102,6 +104,8 @@ export default class PDFToolbar extends PDFViewerComponent {
       this.context?.nextMatch()
     } else if (e.key === 'Escape') {
       this.closeSearch()
+      e.preventDefault()
+      e.stopPropagation()
     }
   }
 
@@ -116,7 +120,7 @@ export default class PDFToolbar extends PDFViewerComponent {
   render() {
     if (!this.context) return html``
 
-    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex } = this.context
+    const { currentPage, totalPages, scale, sidebarCollapsed, searchMatches, currentMatchIndex, searchOpen } = this.context
 
     const matchCount = searchMatches?.length || 0
     const matchDisplay = matchCount > 0 ? `${currentMatchIndex + 1} of ${matchCount}` : '0 of 0'
@@ -164,12 +168,16 @@ export default class PDFToolbar extends PDFViewerComponent {
             <button class="btn--icon" @click="${this.zoomIn}">
               ${unsafeSVG(zoomInIcon)}
             </button>
+            <button class="btn--icon" @click="${this.fitToScreen}" title="Fit to Screen">
+              ${unsafeSVG(fitToScreenIcon)}
+            </button>
           </div>
         </div>
 
         <div class="toolbar__section">
-          <button class="btn--icon" @click="${this.toggleSearch}">
+          <button class="btn--icon btn--search ${searchOpen ? 'btn--search--active' : ''}" @click="${this.toggleSearch}">
             ${unsafeSVG(searchIcon)}
+            <span class="btn--search-badge">/</span>
           </button>
 
           <button class="btn--icon" @click="${this.print}" title="Print">
@@ -186,7 +194,7 @@ export default class PDFToolbar extends PDFViewerComponent {
           </slot>
         </div>
 
-        <div class="search-dropdown ${this.searchOpen ? 'search-dropdown--open' : ''}">
+        <div class="search-dropdown ${searchOpen ? 'search-dropdown--open' : ''}">
           <input
             id="search-input"
             type="text"
