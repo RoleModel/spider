@@ -29,7 +29,7 @@ export default class PDFViewer extends LitElement {
       searchTerm: { type: String, state: true },
       searchMatches: { type: Array, state: true },
       currentMatchIndex: { type: Number, state: true },
-      error: { type: Object, state: true }
+      error: { type: Object, state: true },
       themeStyleSheet: { type: Object, state: true }
     }
   }
@@ -341,28 +341,28 @@ export default class PDFViewer extends LitElement {
     this.currentPage = match.pageNum
   }
 
-  render() {
-    return html`
-      <div class="pdf-viewer-container">
-        <rm-pdf-toolbar>
-          <slot name="close-button" slot="close-button"></slot>
-        </rm-pdf-toolbar>
-        ${this.error ? this._renderError() : html`
-          <div class="content-container">
-            <rm-pdf-sidebar></rm-pdf-sidebar>
-            <rm-pdf-canvas></rm-pdf-canvas>
-          </div>
-        `}
+  _renderContent() {
+    if (this.error) {
+      return this._renderError()
+    }
 
-        ${this.loading ? html`
-          <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Loading PDF...</p>
-          </div>
-        ` : html`
-          <rm-pdf-sidebar></rm-pdf-sidebar>
-          <rm-pdf-canvas></rm-pdf-canvas>
-        `}
+    if (this.loading) {
+      return this._renderLoading()
+    }
+
+    return html`
+      <div class="content-container">
+        <rm-pdf-sidebar></rm-pdf-sidebar>
+        <rm-pdf-canvas></rm-pdf-canvas>
+      </div>
+    `
+  }
+
+  _renderLoading() {
+    return html`
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading PDF...</p>
       </div>
     `
   }
@@ -381,6 +381,17 @@ export default class PDFViewer extends LitElement {
             Try Again
           </button>
         </div>
+      </div>
+    `
+  }
+
+  render() {
+    return html`
+      <div class="pdf-viewer-container">
+        <rm-pdf-toolbar>
+          <slot name="close-button" slot="close-button"></slot>
+        </rm-pdf-toolbar>
+        ${this._renderContent()}
       </div>
     `
   }
