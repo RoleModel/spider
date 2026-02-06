@@ -96,6 +96,10 @@ export default class PDFPage extends PDFViewerComponent {
       let charPosition = 0
 
       textContent.items.forEach((textItem) => {
+        if (!viewport.transform || !textItem.transform) {
+          return
+        }
+
         const tx = pdfjsLib.Util.transform(
           viewport.transform,
           textItem.transform

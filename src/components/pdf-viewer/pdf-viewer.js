@@ -198,7 +198,7 @@ export default class PDFViewer extends LitElement {
     }
   }
 
-  async updated(changedProperties) {
+  willUpdate(changedProperties) {
     if (
       changedProperties.has('pdfDoc') ||
       changedProperties.has('currentPage') ||
@@ -217,13 +217,14 @@ export default class PDFViewer extends LitElement {
     if (changedProperties.has('themeHue') || changedProperties.has('themeSaturation')) {
       this._updateThemeColors()
     }
+  }
 
+  async updated(changedProperties) {
     if (changedProperties.has('src') && this.src && this.open) {
       await this.loadPDF()
     }
 
     if (changedProperties.has('open') && this.open && this.src && !this.pdfDoc) {
-      console.log('loading')
       await this.loadPDF()
     }
   }
