@@ -68,16 +68,24 @@ export default class PDFViewer extends LitElement {
     })
 
     this._handleKeyDown = this._handleKeyDown.bind(this)
+    this._handleResize = this._handleResize.bind(this)
   }
 
   connectedCallback() {
     super.connectedCallback()
     document.addEventListener('keydown', this._handleKeyDown)
+    window.addEventListener('resize', this._handleResize)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     document.removeEventListener('keydown', this._handleKeyDown)
+    window.removeEventListener('resize', this._handleResize)
+  }
+
+  _handleResize() {
+    if (!this.open || !this.pdfDoc) return
+    this.shouldScroll = true
   }
 
   _handleKeyDown(event) {
@@ -139,6 +147,9 @@ export default class PDFViewer extends LitElement {
         if (this.scale > 0.5) {
           this.scale -= 0.25
         }
+      },
+      fitToScreen: () => {
+        this.fitPDFToScreen()
       },
       print: async () => {
         await this.printPDF()
@@ -238,6 +249,41 @@ export default class PDFViewer extends LitElement {
       link.click()
     } catch (error) {
       console.error('Error downloading PDF:', error)
+    }
+  }
+
+  async fitPDFToScreen() {
+    if (!this.pdfDoc) return
+
+    try {
+      const page = await this.pdfDoc.getPage(this.currentPage)
+      const canvas = this.shadowRoot.querySelector('rm-pdf-canvas')
+      if (!canvas) return
+
+      const container = canvas.shadowRoot.querySelector('.canvas-container')
+      if (!container) return
+
+      const containerWidth = container.clientWidth
+      const containerHeight = container.clientHeight
+      const isMobile = window.innerWidth <= 512
+      const padding = isMobile ? 0 : 32
+      const gap = isMobile ? 0 : 16
+
+      const availableWidth = containerWidth - (padding * 2)
+      const availableHeight = containerHeight - (padding * 2) - gap
+
+      const viewport = page.getViewport({ scale: 1 })
+      
+      const scaleX = availableWidth / viewport.width
+      const scaleY = availableHeight / viewport.height
+      
+      const newScale = Math.min(scaleX, scaleY)
+
+      this.scale = Math.max(0.5, Math.min(newScale, 3))
+      
+      this.shouldScroll = true
+    } catch (error) {
+      console.error('Error fitting PDF to screen:', error)
     }
   }
 

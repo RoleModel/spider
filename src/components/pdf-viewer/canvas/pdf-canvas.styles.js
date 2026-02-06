@@ -21,6 +21,8 @@ export default css`
   @media (max-width: 512px) {
     .canvas-container {
       align-items: flex-start;
+      padding: 0;
+      gap: 0;
     }
   }
 `

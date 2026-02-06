@@ -192,5 +192,9 @@ export default css`
     .btn--download {
       display: none;
     }
+
+    .btn--search-badge {
+      display: none;
+    }
   }
 `

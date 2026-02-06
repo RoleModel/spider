@@ -7,6 +7,7 @@ import arrowLeftIcon from '../../../assets/icons/arrow-left.svg?raw'
 import arrowRightIcon from '../../../assets/icons/arrow-right.svg?raw'
 import zoomOutIcon from '../../../assets/icons/zoom-out.svg?raw'
 import zoomInIcon from '../../../assets/icons/zoom-in.svg?raw'
+import fitToScreenIcon from '../../../assets/icons/fit-to-screen.svg?raw'
 import searchIcon from '../../../assets/icons/search.svg?raw'
 import printIcon from '../../../assets/icons/print.svg?raw'
 import downloadIcon from '../../../assets/icons/download.svg?raw'
@@ -41,6 +42,10 @@ export default class PDFToolbar extends PDFViewerComponent {
 
   zoomOut() {
     this.context?.zoomOut()
+  }
+
+  fitToScreen() {
+    this.context?.fitToScreen()
   }
 
   toggleSearch() {
@@ -162,6 +167,9 @@ export default class PDFToolbar extends PDFViewerComponent {
             <span class="zoom-level">${Math.round(scale * 100)}%</span>
             <button class="btn--icon" @click="${this.zoomIn}">
               ${unsafeSVG(zoomInIcon)}
+            </button>
+            <button class="btn--icon" @click="${this.fitToScreen}" title="Fit to Screen">
+              ${unsafeSVG(fitToScreenIcon)}
             </button>
           </div>
         </div>
