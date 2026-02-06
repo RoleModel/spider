@@ -44,7 +44,8 @@ export default css`
     }
   }
 
-  .btn--search {
+  .btn--search,
+  .btn--sidebar {
     background: var(--theme-neutral-100);
     display: flex;
     align-items: center;
@@ -52,17 +53,20 @@ export default css`
     gap: var(--theme-spacing-xs, 0.25rem);
   }
 
-  .btn--search--active {
+  .btn--search--active,
+  .btn--sidebar--active {
     background: var(--theme-primary-50, #e6f0ff);
     color: var(--theme-primary, #0066cc);
   }
 
-  .btn--search--active .btn--search-badge {
+  .btn--search--active .btn--search-badge,
+  .btn--sidebar--active .btn--sidebar-badge {
     background: var(--theme-primary, #0066cc);
     color: var(--theme-neutral-50, #ffffff);
   }
 
-  .btn--search-badge {
+  .btn--search-badge,
+  .btn--sidebar-badge {
     background: var(--theme-neutral-200);
     color: var(--theme-neutral-600);
     font-size: 9px;
@@ -193,7 +197,8 @@ export default css`
       display: none;
     }
 
-    .btn--search-badge {
+    .btn--search-badge,
+    .btn--sidebar-badge {
       display: none;
     }
   }

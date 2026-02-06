@@ -85,20 +85,61 @@ export default class PDFViewer extends LitElement {
   _handleKeyDown(event) {
     if (!this.open) return
 
-    if (event.key === 'Escape') {
-      if (this.searchOpen) {
-        this.searchOpen = false
-        event.preventDefault()
-      } else if (this.escapeClosesViewer) {
-        this.open = false
-        event.preventDefault()
+    const isInputField = event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA'
+
+    const shortcuts = {
+      'Escape': () => {
+        if (this.searchOpen) {
+          this.searchOpen = false
+          return true
+        } else if (this.escapeClosesViewer) {
+          this.open = false
+          return true
+        }
+        return false
+      },
+      '/': () => {
+        if (!isInputField && !this.searchOpen) {
+          this.searchOpen = true
+          return true
+        }
+        return false
+      },
+      's': () => {
+        if (!isInputField) {
+          this.sidebarCollapsed = !this.sidebarCollapsed
+          return true
+        }
+        return false
+      },
+      'p': () => {
+        if (!isInputField) {
+          this.printPDF()
+          return true
+        }
+        return false
+      },
+      'ArrowUp': () => {
+        if (!isInputField && this.currentPage > 1) {
+          this.shouldScroll = true
+          this.currentPage--
+          return true
+        }
+        return false
+      },
+      'ArrowDown': () => {
+        if (!isInputField && this.currentPage < this.totalPages) {
+          this.shouldScroll = true
+          this.currentPage++
+          return true
+        }
+        return false
       }
-    } else if (event.key === '/' && !this.searchOpen) {
-      const target = event.target
-      if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
-        this.searchOpen = true
-        event.preventDefault()
-      }
+    }
+
+    const handler = shortcuts[event.key]
+    if (handler && handler()) {
+      event.preventDefault()
     }
   }
 

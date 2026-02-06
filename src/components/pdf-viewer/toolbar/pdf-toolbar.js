@@ -129,12 +129,14 @@ export default class PDFToolbar extends PDFViewerComponent {
       <div class="toolbar">
         <div class="toolbar__section">
           ${sidebarCollapsed ? html`
-            <button class="btn--icon" @click="${this.toggleSidebar}" title="Open Sidebar">
+            <button class="btn--icon btn--sidebar" @click="${this.toggleSidebar}" title="Open Sidebar (S)">
               ${unsafeSVG(openSidebarIcon)}
+              <span class="btn--sidebar-badge">S</span>
             </button>
           ` : html`
-            <button class="btn--icon" @click="${this.toggleSidebar}" title="Close Sidebar">
+            <button class="btn--icon btn--sidebar" @click="${this.toggleSidebar}" title="Close Sidebar (S)">
               ${unsafeSVG(closeSidebarIcon)}
+              <span class="btn--sidebar-badge">S</span>
             </button>
           `}
 
@@ -175,12 +177,12 @@ export default class PDFToolbar extends PDFViewerComponent {
         </div>
 
         <div class="toolbar__section">
-          <button class="btn--icon btn--search ${searchOpen ? 'btn--search--active' : ''}" @click="${this.toggleSearch}">
+          <button class="btn--icon btn--search ${searchOpen ? 'btn--search--active' : ''}" @click="${this.toggleSearch}" title="Search (/)">
             ${unsafeSVG(searchIcon)}
             <span class="btn--search-badge">/</span>
           </button>
 
-          <button class="btn--icon" @click="${this.print}" title="Print">
+          <button class="btn--icon" @click="${this.print}" title="Print (P)">
             ${unsafeSVG(printIcon)}
           </button>
           <button class="btn--icon btn--download" @click="${this.download}" title="Download">
