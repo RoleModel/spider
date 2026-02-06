@@ -85,7 +85,10 @@ export default class PDFViewer extends LitElement {
   _handleKeyDown(event) {
     if (!this.open) return
 
-    const isInputField = event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA'
+    const target = event.composedPath()[0]
+    const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA'
+
+    if (isInputField && event.key !== 'Escape') return
 
     const shortcuts = {
       'Escape': () => {
@@ -99,28 +102,22 @@ export default class PDFViewer extends LitElement {
         return false
       },
       '/': () => {
-        if (!isInputField && !this.searchOpen) {
+        if (!this.searchOpen) {
           this.searchOpen = true
           return true
         }
         return false
       },
       's': () => {
-        if (!isInputField) {
-          this.sidebarCollapsed = !this.sidebarCollapsed
-          return true
-        }
-        return false
+        this.sidebarCollapsed = !this.sidebarCollapsed
+        return true
       },
       'p': () => {
-        if (!isInputField) {
-          this.printPDF()
-          return true
-        }
-        return false
+        this.printPDF()
+        return true
       },
       'ArrowUp': () => {
-        if (!isInputField && this.currentPage > 1) {
+        if (this.currentPage > 1) {
           this.shouldScroll = true
           this.currentPage--
           return true
@@ -128,7 +125,7 @@ export default class PDFViewer extends LitElement {
         return false
       },
       'ArrowDown': () => {
-        if (!isInputField && this.currentPage < this.totalPages) {
+        if (this.currentPage < this.totalPages) {
           this.shouldScroll = true
           this.currentPage++
           return true
