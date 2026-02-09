@@ -13,7 +13,6 @@ export class PDFViewerComponent extends LitElement {
       context: pdfContext,
       callback: (value) => {
         this.context = value
-        this.requestUpdate()
       },
       subscribe: true
     })
