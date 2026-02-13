@@ -24,24 +24,6 @@ body {
   letter-spacing: 2px;
 }
 
-.github-link {
-  display: inline-block;
-  margin-top: 20px;
-  color: #2d3748;
-  text-decoration: none;
-  font-size: 18px;
-  padding: 10px 20px;
-  border: 2px solid rgba(45, 55, 72, 0.2);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.github-link:hover {
-  background: rgba(45, 55, 72, 0.05);
-  border-color: rgba(45, 55, 72, 0.4);
-  transform: translateY(-2px);
-}
-
 .theme-controls {
   display: flex;
   flex-direction: column;
@@ -206,4 +188,42 @@ body {
   padding: 16px;
   font-size: 18px;
   font-weight: 600;
+}
+
+
+/* Navbar */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+
+  .navbar__group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .navbar__link {
+    display: inline-block;
+    color: #2d3748;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: 2px solid rgba(45, 55, 72, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(45, 55, 72, 0.05);
+      border-color: rgba(45, 55, 72, 0.4);
+      transform: translateY(-2px);
+    }
+
+    &.navbar__link--active {
+      background: rgba(45, 55, 72, 0.15);
+      border-color: rgba(45, 55, 72, 0.4);
+    }
+  }
 }
