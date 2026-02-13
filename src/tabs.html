@@ -114,5 +114,41 @@
         </rm-tabs-root>
       </div>
     </div>
+
+    <section>
+      <pre class="tabs-preview"><code>&lt;rm-tabs-root active="first"&gt;
+  &lt;div role="tablist"&gt;
+    &lt;rm-tabs-trigger name="first" activeClass="active"&gt;
+      &lt;button type="button"&gt;First&lt;/button&gt;
+    &lt;/rm-tabs-trigger&gt;
+    &lt;rm-tabs-trigger name="second" activeClass="active"&gt;
+      &lt;button  type="button"&gt;Second&lt;/button&gt;
+    &lt;/rm-tabs-trigger&gt;
+  &lt;/div&gt;
+  &lt;rm-tabs-panel name="first"&gt;
+    &lt;p&gt;This is the &lt;b&gt;first&lt;/b&gt; tab panel. You can put any content here.&lt;/p&gt;
+  &lt;/rm-tabs-panel&gt;
+  &lt;rm-tabs-panel name="second"&gt;
+    &lt;p&gt;This is the &lt;b&gt;second&lt;/b&gt; tab panel. Try switching tabs!&lt;/p&gt;
+  &lt;/rm-tabs-panel&gt;
+&lt;/rm-tabs-root&gt;</code></pre>
+    </section>
+
+    <section>
+      <h2>Note on usage</h2>
+
+      <p>The Tab components do not provide their own stylings. This allows them to provide behavior without imposing a specific look and feel, giving you full control over the appearance.</p>
+    </section>
+
+    <section>
+      <h2>Methods and usage</h2>
+      <ul>
+        <li><code>rm-tabs-root</code>: set/read active tab with the <code>active</code> attribute/property. Example: <code>tabsRoot.active = "second"</code></li>
+        <li><code>rm-tabs-trigger</code>: call <code>setActive()</code> to activate that trigger's tab. Example: <code>triggerEl.setActive()</code></li>
+        <li><code>rm-tabs-trigger</code>: read <code>isActive</code> to know if trigger is selected. Example: <code>if (triggerEl.isActive) { ... }</code></li>
+        <li><code>rm-tabs-panel</code>: call <code>activate()</code> to make that panel's tab active. Example: <code>panelEl.activate()</code></li>
+        <li><code>rm-tabs-panel</code>: read <code>active</code> to know if panel is currently visible. Example: <code>if (panelEl.active) { ... }</code></li>
+      </ul>
+    </section>
   </body>
 </html>
