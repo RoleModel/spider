@@ -22,32 +22,97 @@
       <h1>Tabs</h1>
     </div>
 
-    <rm-tabs-root active="first">
-      <div role="tablist" class="whatever you want">
-        <rm-tabs-trigger name="first" activeClass="btn--primary">
-          <button class="btn" type="button">First</button>
-        </rm-tabs-trigger>
-        <rm-tabs-trigger name="second" activeClass="btn--primary">
-          <button class="btn" type="button">Second</button>
-        </rm-tabs-trigger>
+    <div class="tabs-demos">
+      <!-- Basic Example -->
+      <div class="tabs-demos__item">
+        <h2>Basic Tabs</h2>
+        <rm-tabs-root active="first" class="tabs">
+          <div role="tablist" class="tabs__list">
+            <rm-tabs-trigger name="first" activeClass="tabs__btn--active">
+              <button class="tabs__btn" type="button">First</button>
+            </rm-tabs-trigger>
+            <rm-tabs-trigger name="second" activeClass="tabs__btn--active">
+              <button class="tabs__btn" type="button">Second</button>
+            </rm-tabs-trigger>
+          </div>
+          <rm-tabs-panel name="first">
+            <div class="tabs__panel">
+              <p>This is the <b>first</b> tab panel. You can put any content here.</p>
+            </div>
+          </rm-tabs-panel>
+          <rm-tabs-panel name="second">
+            <div class="tabs__panel">
+              <p>This is the <b>second</b> tab panel. Try switching tabs!</p>
+            </div>
+          </rm-tabs-panel>
+        </rm-tabs-root>
       </div>
-      <rm-tabs-panel name="first">
-        <span>First Tab Content</span>
-      </rm-tabs-panel>
-      <rm-tabs-panel name="second">
-        <span>Second Tab Content</span>
-      </rm-tabs-panel>
-    </rm-tabs-root>
 
-    <!-- <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89" escape-closes-viewer></rm-pdf-viewer>
+      <!-- Colorful Example -->
+      <div class="tabs-demos__item">
+        <h2>Colorful Tabs</h2>
+        <rm-tabs-root active="green" class="tabs">
+          <div role="tablist" class="tabs__list">
+            <rm-tabs-trigger name="red" activeClass="tabs__btn--active">
+              <button class="tabs__btn tabs__btn--red" type="button">Red</button>
+            </rm-tabs-trigger>
+            <rm-tabs-trigger name="green" activeClass="tabs__btn--active">
+              <button class="tabs__btn tabs__btn--green" type="button">Green</button>
+            </rm-tabs-trigger>
+            <rm-tabs-trigger name="blue" activeClass="tabs__btn--active">
+              <button class="tabs__btn tabs__btn--blue" type="button">Blue</button>
+            </rm-tabs-trigger>
+          </div>
+          <rm-tabs-panel name="red">
+            <div class="tabs__panel tabs__panel--red">
+              <p>Red panel content.</p>
+            </div>
+          </rm-tabs-panel>
+          <rm-tabs-panel name="green">
+            <div class="tabs__panel tabs__panel--green">
+              <p>Green panel content.</p>
+            </div>
+          </rm-tabs-panel>
+          <rm-tabs-panel name="blue">
+            <div class="tabs__panel tabs__panel--blue">
+              <p>Blue panel content.</p>
+            </div>
+          </rm-tabs-panel>
+        </rm-tabs-root>
+      </div>
 
-    <rm-pdf-viewer id="viewer-custom" src="/data/the-veldt.pdf" theme-hue="142" theme-saturation="76" escape-closes-viewer>
-      <button slot="close-button" class="custom-close-btn">
-        ← Back to Demos
-      </button>
-    </rm-pdf-viewer> -->
-
-    <script type="module">
-    </script>
+      <!-- Icon Tabs Example -->
+      <div class="tabs-demos__item">
+        <h2>Tabs with Icons</h2>
+        <rm-tabs-root active="settings" class="tabs">
+          <div role="tablist" class="tabs__list">
+            <rm-tabs-trigger name="home" activeClass="tabs__btn--active">
+              <button class="tabs__btn" type="button">🏠 Home</button>
+            </rm-tabs-trigger>
+            <rm-tabs-trigger name="star" activeClass="tabs__btn--active">
+              <button class="tabs__btn" type="button">⭐ Star</button>
+            </rm-tabs-trigger>
+            <rm-tabs-trigger name="settings" activeClass="tabs__btn--active">
+              <button class="tabs__btn" type="button">⚙️ Settings</button>
+            </rm-tabs-trigger>
+          </div>
+          <rm-tabs-panel name="home">
+            <div class="tabs__panel">
+              <p>Welcome to the home tab.</p>
+            </div>
+          </rm-tabs-panel>
+          <rm-tabs-panel name="star">
+            <div class="tabs__panel">
+              <p>Starred content goes here.</p>
+            </div>
+          </rm-tabs-panel>
+          <rm-tabs-panel name="settings">
+            <div class="tabs__panel">
+              <p>Settings panel content.</p>
+            </div>
+          </rm-tabs-panel>
+        </rm-tabs-root>
+      </div>
+    </div>
   </body>
 </html>
