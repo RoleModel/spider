@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
-    <script type="module" src="/components/pdf-viewer/pdf-viewer.js"></script>
+    <script type="module" src="/components/tabs/index.js"></script>
     <link rel="stylesheet" href="/assets/application.css" />
   </head>
   <body>
@@ -21,6 +21,23 @@
     <div class="header">
       <h1>Tabs</h1>
     </div>
+
+    <rm-tabs-root active="first">
+      <div role="tablist" class="whatever you want">
+        <rm-tabs-trigger name="first" activeClass="btn--primary">
+          <button class="btn" type="button">First</button>
+        </rm-tabs-trigger>
+        <rm-tabs-trigger name="second" activeClass="btn--primary">
+          <button class="btn" type="button">Second</button>
+        </rm-tabs-trigger>
+      </div>
+      <rm-tabs-panel name="first">
+        <span>First Tab Content</span>
+      </rm-tabs-panel>
+      <rm-tabs-panel name="second">
+        <span>Second Tab Content</span>
+      </rm-tabs-panel>
+    </rm-tabs-root>
 
     <!-- <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89" escape-closes-viewer></rm-pdf-viewer>
 
