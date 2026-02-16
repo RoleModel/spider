@@ -9,6 +9,8 @@ export default defineConfig({
       entry: {
         'index': resolve(__dirname, 'src/index.js'),
         'components/pdf-viewer/index': resolve(__dirname, 'src/components/pdf-viewer/index.js'),
+        'components/tabs/index': resolve(__dirname, 'src/components/tabs/index.js'),
+        'events/index': resolve(__dirname, 'src/events/index.js')
       },
       formats: ['es']
     },

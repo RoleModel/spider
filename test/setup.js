@@ -15,6 +15,20 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }))
 
+// Test Shim for attachInternals, which is not supported in the test environment.
+// This allows us to test components that use attachInternals without throwing errors.
+if (!HTMLElement.prototype.attachInternals) {
+  Object.defineProperty(HTMLElement.prototype, 'attachInternals', {
+    configurable: true,
+    value: vi.fn(() => ({
+      setFormValue: vi.fn(),
+      setValidity: vi.fn(),
+      checkValidity: vi.fn(() => true),
+      reportValidity: vi.fn(() => true),
+    })),
+  })
+}
+
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
   fillRect: vi.fn(),
   clearRect: vi.fn(),
