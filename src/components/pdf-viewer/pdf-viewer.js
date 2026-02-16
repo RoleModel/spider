@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit'
+import { html } from 'lit'
 import { ContextProvider } from '@lit/context'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
@@ -10,9 +10,11 @@ import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
 import './canvas/pdf-canvas.js'
 
+import RoleModelElement from '../../internal/rolemodel-element.js'
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
-export default class PDFViewer extends LitElement {
+export default class PDFViewer extends RoleModelElement {
   static get properties() {
     return {
       src: { type: String },
@@ -547,4 +549,3 @@ export default class PDFViewer extends LitElement {
 }
 
 customElements.define('rm-pdf-viewer', PDFViewer)
-

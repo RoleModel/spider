@@ -1,8 +1,9 @@
-import { LitElement } from 'lit'
 import { ContextConsumer } from '@lit/context'
 import { pdfContext } from './pdf-context.js'
 
-export class PDFViewerComponent extends LitElement {
+import RoleModelElement from "../../internal/rolemodel-element.js"
+
+export class PDFViewerComponent extends RoleModelElement {
   static get styles() {
     return []
   }
