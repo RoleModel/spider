@@ -31,12 +31,12 @@ describe('RmTabsTrigger', () => {
     document.body.innerHTML = ''
   })
 
-  it('setActive dispatches rm-tab-select with expected detail', async () => {
+  it('activate dispatches rm-tab-select with expected detail', async () => {
     const { root, trigger } = await createTriggerFixture({ active: 'second', triggerName: 'first' })
     const listener = vi.fn()
 
     trigger.addEventListener('rm-tab-select', listener)
-    trigger.setActive()
+    trigger.activate()
 
     await waitForUpdates(root, trigger)
 

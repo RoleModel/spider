@@ -20,7 +20,7 @@ describe('Tabs Integration Tests', () => {
   it('updates trigger classes and panel visibility when trigger selects another tab', async () => {
     const { root, firstTrigger, secondTrigger, firstButton, secondButton, firstPanel, secondPanel } = await createTabsFixture({ active: 'first' })
 
-    secondTrigger.setActive()
+    secondTrigger.activate()
     await waitForUpdates(root, firstTrigger, secondTrigger, firstPanel, secondPanel)
 
     const firstPanelContainer = firstPanel.shadowRoot.querySelector('[role="tabpanel"]')

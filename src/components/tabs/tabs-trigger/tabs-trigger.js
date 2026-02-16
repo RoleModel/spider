@@ -31,12 +31,12 @@ export default class RmTabsTrigger extends RoleModelElement {
     return this._activeTab.value === this.name
   }
 
-  setActive() {
+  activate() {
     this.dispatchEvent(new RmTabSelectEvent(this.name))
   }
 
   #handleClick(_event) {
-    this.setActive()
+    this.activate()
   }
 
   #handleSlotChange(_event) {
