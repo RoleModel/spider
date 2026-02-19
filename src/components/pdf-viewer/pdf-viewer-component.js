@@ -14,7 +14,6 @@ export class PDFViewerComponent extends RoleModelElement {
       context: pdfContext,
       callback: (value) => {
         this.context = value
-        this.requestUpdate()
       },
       subscribe: true
     })
