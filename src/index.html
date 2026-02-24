@@ -53,7 +53,7 @@
 
     <rm-pdf-viewer id="viewer" src="/data/the-veldt.pdf" theme-hue="217" theme-saturation="89" escape-closes-viewer></rm-pdf-viewer>
 
-    <rm-pdf-viewer id="viewer-custom" src="/data/the-veldt.pdf" theme-hue="142" theme-saturation="76" escape-closes-viewer>
+    <rm-pdf-viewer id="viewer-custom" src="/data/example.pdf" theme-hue="142" theme-saturation="76" escape-closes-viewer>
       <button slot="close-button" class="custom-close-btn">
         ← Back to Demos
       </button>
@@ -75,9 +75,8 @@
       const hueValue = document.getElementById('hue-value');
       const canvasCustom = document.getElementById('thumbnail-canvas-custom');
 
-      async function renderThumbnail(canvasEl) {
+      async function renderThumbnail(canvasEl, pdfSrc = '/data/the-veldt.pdf') {
         try {
-          const pdfSrc = '/data/the-veldt.pdf';
           const loadingTask = pdfjsLib.getDocument(pdfSrc);
           const pdf = await loadingTask.promise;
           const page = await pdf.getPage(1);
@@ -120,7 +119,7 @@
       })
 
       renderThumbnail(canvas)
-      renderThumbnail(canvasCustom)
+      renderThumbnail(canvasCustom, '/data/example.pdf');
       hueSlider.addEventListener('input', (e) => {
         const hue = e.target.value;
         viewer.themeHue = parseInt(hue);
