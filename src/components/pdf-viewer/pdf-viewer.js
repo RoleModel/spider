@@ -26,6 +26,7 @@ class LocalWasmFactory {
     const url = BUNDLED_WASM_URLS[filename]
     if (!url) throw new Error(`Unknown WASM file: ${filename}`)
     const response = await fetch(url)
+    if (!response.ok) throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`)
     return new Uint8Array(await response.arrayBuffer())
   }
 }
