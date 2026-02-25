@@ -2,6 +2,8 @@ import { html } from 'lit'
 import { ContextProvider } from '@lit/context'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
+
+const DEFAULT_WASM_URL = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/wasm/`
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
 import { createThemeStyleSheet } from './theme-config.js'
@@ -18,6 +20,7 @@ export default class PDFViewer extends RoleModelElement {
   static get properties() {
     return {
       src: { type: String },
+      wasmUrl: { type: String, attribute: 'wasm-url' },
       open: { type: Boolean, reflect: true },
       initialPage: { type: Number, attribute: 'initial-page' },
       themeHue: { type: Number, attribute: 'theme-hue' },
@@ -46,6 +49,7 @@ export default class PDFViewer extends RoleModelElement {
   constructor() {
     super()
     this.src = ''
+    this.wasmUrl = DEFAULT_WASM_URL
     this.open = false
     this.initialPage = 1
     this.themeHue = 217
@@ -344,7 +348,7 @@ export default class PDFViewer extends RoleModelElement {
     this.pdfDoc = null
     this.loading = true
     try {
-      const loadingTask = pdfjsLib.getDocument(this.src)
+      const loadingTask = pdfjsLib.getDocument({ url: this.src, wasmUrl: this.wasmUrl })
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
 

@@ -72,7 +72,7 @@ describe('PDFViewer Component', () => {
 
       await waitForCondition(() => element.pdfDoc !== null)
 
-      expect(pdfjsLib.getDocument).toHaveBeenCalledWith('/test.pdf')
+      expect(pdfjsLib.getDocument).toHaveBeenCalledWith(expect.objectContaining({ url: '/test.pdf' }))
       expect(element.pdfDoc).toBeDefined()
       expect(element.totalPages).toBe(5)
     })
