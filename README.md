@@ -72,7 +72,6 @@ This component aims to be that skin layer built upon PDF.js packaged in a lovely
 | `theme-hue` | `number` | `217` | Theme hue (`0-360`) |
 | `theme-saturation` | `number` | `89` | Theme saturation (`0-100`) |
 | `escape-closes-viewer` | `boolean` | `false` | Closes viewer on `Escape` when search is not open |
-| `wasm-url` | `string` | Bundled | Base URL for WASM binaries. Only override with a trusted source. |
 
 #### Slot
 

@@ -36,7 +36,6 @@ export default class PDFViewer extends RoleModelElement {
   static get properties() {
     return {
       src: { type: String },
-      wasmUrl: { type: String, attribute: 'wasm-url' },
       open: { type: Boolean, reflect: true },
       initialPage: { type: Number, attribute: 'initial-page' },
       themeHue: { type: Number, attribute: 'theme-hue' },
@@ -65,7 +64,6 @@ export default class PDFViewer extends RoleModelElement {
   constructor() {
     super()
     this.src = ''
-    this.wasmUrl = null
     this.open = false
     this.initialPage = 1
     this.themeHue = 217
@@ -364,10 +362,7 @@ export default class PDFViewer extends RoleModelElement {
     this.pdfDoc = null
     this.loading = true
     try {
-      const loadingTask = pdfjsLib.getDocument({
-        url: this.src,
-        ...(this.wasmUrl ? { wasmUrl: this.wasmUrl } : { WasmFactory: LocalWasmFactory })
-      })
+      const loadingTask = pdfjsLib.getDocument({ url: this.src, WasmFactory: LocalWasmFactory })
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
 
