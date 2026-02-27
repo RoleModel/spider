@@ -2,6 +2,9 @@ import { html } from 'lit'
 import { ContextProvider } from '@lit/context'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
+import jbig2WasmUrl from 'pdfjs-dist/wasm/jbig2.wasm?url'
+import openjpegWasmUrl from 'pdfjs-dist/wasm/openjpeg.wasm?url'
+import qcmsWasmUrl from 'pdfjs-dist/wasm/qcms_bg.wasm?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
 import { createThemeStyleSheet } from './theme-config.js'
@@ -9,8 +12,24 @@ import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
 import './canvas/pdf-canvas.js'
-
 import RoleModelElement from '../../internal/rolemodel-element.js'
+
+const BUNDLED_WASM_URLS = {
+  'jbig2.wasm': jbig2WasmUrl,
+  'openjpeg.wasm': openjpegWasmUrl,
+  'qcms_bg.wasm': qcmsWasmUrl,
+}
+
+class LocalWasmFactory {
+  constructor() {}
+  async fetch({ filename }) {
+    const url = BUNDLED_WASM_URLS[filename]
+    if (!url) throw new Error(`Unknown WASM file: ${filename}`)
+    const response = await fetch(url)
+    if (!response.ok) throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`)
+    return new Uint8Array(await response.arrayBuffer())
+  }
+}
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
@@ -344,7 +363,7 @@ export default class PDFViewer extends RoleModelElement {
     this.pdfDoc = null
     this.loading = true
     try {
-      const loadingTask = pdfjsLib.getDocument(this.src)
+      const loadingTask = pdfjsLib.getDocument({ url: this.src, WasmFactory: LocalWasmFactory })
       this.pdfDoc = await loadingTask.promise
       this.totalPages = this.pdfDoc.numPages
 
