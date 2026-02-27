@@ -15,7 +15,7 @@ export default defineConfig({
       formats: ['es']
     },
     rollupOptions: {
-      external: [/^lit/, /^@lit/],
+      external: [/^lit/, /^@lit/, 'pdfjs-dist'],
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',
@@ -29,12 +29,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['pdfjs-dist']
-  },
-  resolve: {
-    alias: [
-      { find: /^pdfjs-dist\/build\/pdf\.worker\.mjs/, replacement: 'pdfjs-dist/legacy/build/pdf.worker.mjs' },
-      { find: /^pdfjs-dist$/, replacement: 'pdfjs-dist/legacy/build/pdf.mjs' }
-    ]
   },
   server: {
     fs: {
