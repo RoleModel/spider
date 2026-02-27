@@ -145,6 +145,115 @@ describe('PDFViewer Component', () => {
     })
   })
 
+  describe('Download PDF', () => {
+    let createdLink
+    let originalFetch
+
+    beforeEach(async () => {
+      element = await createViewer({ src: '/documents/report.pdf', open: true })
+
+      originalFetch = global.fetch
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: { get: vi.fn().mockReturnValue('application/pdf') },
+        blob: vi.fn().mockResolvedValue(new Blob(['%PDF'], { type: 'application/pdf' }))
+      })
+
+      global.URL.createObjectURL = vi.fn().mockReturnValue('blob:mock-url')
+      global.URL.revokeObjectURL = vi.fn()
+
+      createdLink = null
+      const originalCreateElement = document.createElement.bind(document)
+      vi.spyOn(document, 'createElement').mockImplementation((tag) => {
+        const el = originalCreateElement(tag)
+        if (tag === 'a') createdLink = el
+        return el
+      })
+      vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      global.fetch = originalFetch
+      vi.restoreAllMocks()
+    })
+
+    it('should extract the filename from a plain URL', async () => {
+      await element.downloadPDF()
+
+      expect(createdLink.download).toBe('report.pdf')
+      expect(HTMLAnchorElement.prototype.click).toHaveBeenCalled()
+    })
+
+    it('should strip query parameters from the filename', async () => {
+      element.src = '/documents/KP%20Covenant.pdf?disposition=inline'
+      await element.updateComplete
+
+      await element.downloadPDF()
+
+      expect(createdLink.download).toBe('KP Covenant.pdf')
+    })
+
+    it('should decode URL-encoded characters in the filename', async () => {
+      element.src = '/files/My%20Document%20%282024%29.pdf'
+      await element.updateComplete
+
+      await element.downloadPDF()
+
+      expect(createdLink.download).toBe('My Document (2024).pdf')
+    })
+
+    it('should fall back to "document.pdf" when the URL has no filename', async () => {
+      element.src = 'https://example.com/'
+      await element.updateComplete
+
+      await element.downloadPDF()
+
+      expect(createdLink.download).toBe('document.pdf')
+    })
+
+    it('should create a blob URL and revoke it after download', async () => {
+      await element.downloadPDF()
+
+      expect(URL.createObjectURL).toHaveBeenCalled()
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url')
+    })
+
+    it('should not fetch when src is empty', async () => {
+      element.src = ''
+      await element.updateComplete
+
+      await element.downloadPDF()
+
+      expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    it('should log an error when the fetch response is not ok', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found'
+      })
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+      await element.downloadPDF()
+
+      expect(consoleSpy).toHaveBeenCalled()
+    })
+
+    it('should log an error when the response content type is not PDF', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: { get: vi.fn().mockReturnValue('text/html') },
+        blob: vi.fn()
+      })
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+      await element.downloadPDF()
+
+      expect(consoleSpy).toHaveBeenCalled()
+    })
+  })
+
   describe('Toolbar', () => {
     beforeEach(async () => {
       element = await createViewer({ src: '/test.pdf', open: true })
