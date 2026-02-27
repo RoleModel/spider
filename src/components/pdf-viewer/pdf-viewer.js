@@ -310,9 +310,12 @@ export default class PDFViewer extends RoleModelElement {
       const blob = await response.blob()
       const blobUrl = URL.createObjectURL(blob)
 
+      const url = new URL(this.src, window.location.href)
+      const filename = url.pathname.split('/').pop() || 'document.pdf'
+
       const link = document.createElement('a')
       link.href = blobUrl
-      link.download = this.src.split('/').pop() || 'document.pdf'
+      link.download = decodeURIComponent(filename)
       link.click()
 
       URL.revokeObjectURL(blobUrl)
