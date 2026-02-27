@@ -292,14 +292,30 @@ export default class PDFViewer extends RoleModelElement {
     }
   }
 
-  downloadPDF() {
+  async downloadPDF() {
     if (!this.src) return
 
     try {
+      const response = await fetch(this.src)
+
+      if (!response.ok) {
+        throw new Error(`Failed to download: ${response.status} ${response.statusText}`)
+      }
+
+      const contentType = response.headers.get('content-type') || ''
+      if (!contentType.includes('application/pdf')) {
+        throw new Error(`Unexpected content type: ${contentType}`)
+      }
+
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
       const link = document.createElement('a')
-      link.href = this.src
+      link.href = blobUrl
       link.download = this.src.split('/').pop() || 'document.pdf'
       link.click()
+
+      URL.revokeObjectURL(blobUrl)
     } catch (error) {
       console.error('Error downloading PDF:', error)
     }
