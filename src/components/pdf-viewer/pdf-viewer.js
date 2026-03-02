@@ -116,6 +116,14 @@ export default class PDFViewer extends RoleModelElement {
         if (this.searchOpen) {
           this.searchOpen = false
           return true
+        }
+
+        const closeButtonSlot = this.shadowRoot?.querySelector('slot[name="close-button"]')
+        const slottedCloseButton = closeButtonSlot?.assignedElements()?.[0]
+
+        if (slottedCloseButton) {
+          slottedCloseButton.click()
+          return true
         } else if (this.escapeClosesViewer) {
           this.open = false
           return true
