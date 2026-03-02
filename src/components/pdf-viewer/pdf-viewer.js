@@ -260,6 +260,7 @@ export default class PDFViewer extends RoleModelElement {
       `
       iframeDoc.head.appendChild(style)
 
+      const imageLoadPromises = []
       for (let pageNum = 1; pageNum <= this.totalPages; pageNum++) {
         const page = await this.pdfDoc.getPage(pageNum)
         const viewport = page.getViewport({ scale: 1.5 })
@@ -275,11 +276,18 @@ export default class PDFViewer extends RoleModelElement {
         }).promise
 
         const img = document.createElement('img')
+        const loadPromise = new Promise((resolve) => {
+          img.onload = resolve
+          img.onerror = resolve
+        })
         img.src = canvas.toDataURL()
         img.style.width = '100%'
         img.style.pageBreakAfter = pageNum < this.totalPages ? 'always' : 'auto'
         iframeDoc.body.appendChild(img)
+        imageLoadPromises.push(loadPromise)
       }
+
+      await Promise.all(imageLoadPromises)
 
       iframe.contentWindow.focus()
       iframe.contentWindow.print()
