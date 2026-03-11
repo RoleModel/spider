@@ -80,6 +80,13 @@ export default class PDFPage extends PDFViewerComponent {
       textLayerDiv.innerHTML = ''
 
       await this.renderTextLayer(viewport, textLayerDiv)
+
+      const annotationLayerDiv = this.shadowRoot.querySelector('.annotation-layer')
+      annotationLayerDiv.style.width = `${viewport.width}px`
+      annotationLayerDiv.style.height = `${viewport.height}px`
+      annotationLayerDiv.innerHTML = ''
+
+      await this.renderAnnotationLayer(viewport, annotationLayerDiv)
     } catch (error) {
       if (error.name !== 'RenderingCancelledException') {
         console.error('Error rendering page:', error)
@@ -143,6 +150,60 @@ export default class PDFPage extends PDFViewerComponent {
     }
   }
 
+  async renderAnnotationLayer(viewport, annotationLayerDiv) {
+    if (!this.page?.getAnnotations) return
+
+    try {
+      const annotations = await this.page.getAnnotations({ intent: 'display' })
+      const linkAnnotations = annotations.filter(annotation =>
+        annotation?.subtype === 'Link' &&
+        Array.isArray(annotation.rect) &&
+        (annotation.url || annotation.unsafeUrl)
+      )
+
+      linkAnnotations.forEach(annotation => {
+        const linkUrl = annotation.url || annotation.unsafeUrl
+        const viewportRect = this._getViewportRect(annotation.rect, viewport)
+        if (!viewportRect) return
+
+        const [x1, y1, x2, y2] = viewportRect
+        const link = document.createElement('a')
+
+        link.href = linkUrl
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
+        link.style.position = 'absolute'
+        link.style.left = `${Math.min(x1, x2)}px`
+        link.style.top = `${Math.min(y1, y2)}px`
+        link.style.width = `${Math.abs(x2 - x1)}px`
+        link.style.height = `${Math.abs(y2 - y1)}px`
+        link.style.display = 'block'
+        link.style.pointerEvents = 'auto'
+        link.setAttribute('aria-label', `Open link: ${linkUrl}`)
+
+        annotationLayerDiv.appendChild(link)
+      })
+    } catch (error) {
+      console.error('Error rendering annotation layer:', error)
+    }
+  }
+
+  _getViewportRect(annotationRect, viewport) {
+    if (typeof viewport.convertToViewportRectangle === 'function') {
+      return viewport.convertToViewportRectangle(annotationRect)
+    }
+
+    const [x1, y1, x2, y2] = annotationRect
+    const scale = viewport.scale || 1
+
+    return [
+      Math.min(x1, x2) * scale,
+      viewport.height - (Math.max(y1, y2) * scale),
+      Math.max(x1, x2) * scale,
+      viewport.height - (Math.min(y1, y2) * scale)
+    ]
+  }
+
   highlightText(element, text, itemStart, matches) {
     element.innerHTML = ''
 
@@ -197,6 +258,7 @@ export default class PDFPage extends PDFViewerComponent {
       <div class="page-wrapper">
         <canvas data-page-number="${this.pageNumber}"></canvas>
         <div class="text-layer"></div>
+        <div class="annotation-layer"></div>
       </div>
     `
   }

@@ -13,6 +13,8 @@ export default css`
   canvas {
     display: block;
     box-shadow: 0 var(--theme-spacing-xs, 0.25rem) var(--theme-spacing-sm, 0.5rem) var(--theme-shadow, rgba(0, 0, 0, 0.1));
+    position: relative;
+    z-index: 0;
   }
 
   .text-layer {
@@ -24,6 +26,7 @@ export default css`
     line-height: 1;
     text-align: initial;
     pointer-events: auto;
+    z-index: 1;
   }
 
   .text-layer > div {
@@ -37,5 +40,17 @@ export default css`
 
   .text-layer > div::selection {
     background-color: var(--theme-primary-transparent);
+  }
+
+  .annotation-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    pointer-events: auto;
+  }
+
+  .annotation-layer a {
+    text-decoration: none;
   }
 `
