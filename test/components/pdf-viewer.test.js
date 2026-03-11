@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as pdfjsLib from 'pdfjs-dist'
 import '../../src/components/pdf-viewer/pdf-viewer.js'
-import { createMockPDFDocument, waitForCondition } from '../helpers/test-utils.js'
+import { createMockPDFDocument, createMockPage, waitForCondition } from '../helpers/test-utils.js'
 
 vi.mock('pdfjs-dist', async () => {
   const actual = await vi.importActual('pdfjs-dist')
@@ -251,6 +251,42 @@ describe('PDFViewer Component', () => {
       await element.downloadPDF()
 
       expect(consoleSpy).toHaveBeenCalled()
+    })
+  })
+
+
+  describe('Link annotations', () => {
+    beforeEach(async () => {
+      const pageWithLink = createMockPage(1)
+      pageWithLink.getAnnotations = vi.fn().mockResolvedValue([
+        {
+          subtype: 'Link',
+          url: 'https://example.com/docs',
+          rect: [100, 100, 220, 140]
+        }
+      ])
+
+      pdfjsLib.getDocument.mockReturnValue({
+        promise: Promise.resolve({
+          numPages: 1,
+          getPage: vi.fn().mockResolvedValue(pageWithLink)
+        })
+      })
+
+      element = await createViewer({ src: '/test.pdf', open: true })
+      await waitForCondition(() => element.pdfDoc !== null)
+    })
+
+    it('should render clickable links from PDF annotations', async () => {
+      const canvas = element.shadowRoot.querySelector('rm-pdf-canvas')
+      await waitForCondition(() => canvas?.shadowRoot?.querySelector('rm-pdf-page'))
+
+      const page = canvas.shadowRoot.querySelector('rm-pdf-page')
+      await waitForCondition(() => page?.shadowRoot?.querySelector('.annotation-layer a'))
+
+      const link = page.shadowRoot.querySelector('.annotation-layer a')
+      expect(link).toBeDefined()
+      expect(link.getAttribute('href')).toBe('https://example.com/docs')
     })
   })
 
