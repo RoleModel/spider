@@ -53,4 +53,10 @@ export default css`
   .annotation-layer a {
     text-decoration: none;
   }
+
+  .annotation-link {
+    position: absolute;
+    display: block;
+    pointer-events: auto;
+  }
 `

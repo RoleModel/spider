@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html, render } from 'lit'
 import * as pdfjsLib from 'pdfjs-dist'
 import { PDFViewerComponent } from '../pdf-viewer-component.js'
 import { normalizeText } from '../helpers/text-helper.js'
@@ -86,7 +86,7 @@ export default class PDFPage extends PDFViewerComponent {
       annotationLayerDiv.style.height = `${viewport.height}px`
       annotationLayerDiv.innerHTML = ''
 
-      await this.renderAnnotationLayer(viewport, annotationLayerDiv)
+      await this.renderLinkAnnotationLayer(viewport, annotationLayerDiv)
     } catch (error) {
       if (error.name !== 'RenderingCancelledException') {
         console.error('Error rendering page:', error)
@@ -150,9 +150,7 @@ export default class PDFPage extends PDFViewerComponent {
     }
   }
 
-  async renderAnnotationLayer(viewport, annotationLayerDiv) {
-    if (!this.page?.getAnnotations) return
-
+  async renderLinkAnnotationLayer(viewport, annotationLayerDiv) {
     try {
       const annotations = await this.page.getAnnotations({ intent: 'display' })
       const linkAnnotations = annotations.filter(annotation =>
@@ -161,47 +159,46 @@ export default class PDFPage extends PDFViewerComponent {
         (annotation.url || annotation.unsafeUrl)
       )
 
-      linkAnnotations.forEach(annotation => {
+      const links = linkAnnotations.map(annotation => {
         const linkUrl = annotation.url || annotation.unsafeUrl
         const viewportRect = this._getViewportRect(annotation.rect, viewport)
-        if (!viewportRect) return
+        if (!viewportRect) return html``
 
-        const [x1, y1, x2, y2] = viewportRect
-        const link = document.createElement('a')
-
-        link.href = linkUrl
-        link.target = '_blank'
-        link.rel = 'noopener noreferrer'
-        link.style.position = 'absolute'
-        link.style.left = `${Math.min(x1, x2)}px`
-        link.style.top = `${Math.min(y1, y2)}px`
-        link.style.width = `${Math.abs(x2 - x1)}px`
-        link.style.height = `${Math.abs(y2 - y1)}px`
-        link.style.display = 'block'
-        link.style.pointerEvents = 'auto'
-        link.setAttribute('aria-label', `Open link: ${linkUrl}`)
-
-        annotationLayerDiv.appendChild(link)
+        const [left, top, width, height] = viewportRect
+        return html`
+          <a
+            class="annotation-link"
+            href=${linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open link: ${linkUrl}"
+            style="left:${left}px;top:${top}px;width:${width}px;height:${height}px"
+          ></a>
+        `
       })
+      render(html`${links}`, annotationLayerDiv)
     } catch (error) {
       console.error('Error rendering annotation layer:', error)
     }
   }
 
   _getViewportRect(annotationRect, viewport) {
+    let coords
     if (typeof viewport.convertToViewportRectangle === 'function') {
-      return viewport.convertToViewportRectangle(annotationRect)
+      coords = viewport.convertToViewportRectangle(annotationRect)
+    } else {
+      const [x1, y1, x2, y2] = annotationRect
+      const scale = viewport.scale || 1
+      coords = [
+        Math.min(x1, x2) * scale,
+        viewport.height - (Math.max(y1, y2) * scale),
+        Math.max(x1, x2) * scale,
+        viewport.height - (Math.min(y1, y2) * scale)
+      ]
     }
 
-    const [x1, y1, x2, y2] = annotationRect
-    const scale = viewport.scale || 1
-
-    return [
-      Math.min(x1, x2) * scale,
-      viewport.height - (Math.max(y1, y2) * scale),
-      Math.max(x1, x2) * scale,
-      viewport.height - (Math.min(y1, y2) * scale)
-    ]
+    const [x1, y1, x2, y2] = coords
+    return [Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1)]
   }
 
   highlightText(element, text, itemStart, matches) {
