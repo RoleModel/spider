@@ -1,5 +1,6 @@
 import { html } from 'lit'
 import { ContextProvider } from '@lit/context'
+import './url-parse-polyfill.js'
 import * as pdfjsLib from 'pdfjs-dist'
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import jbig2WasmUrl from 'pdfjs-dist/wasm/jbig2.wasm?url'
