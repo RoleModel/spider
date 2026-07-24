@@ -1,5 +1,9 @@
-export const createThemeStyleSheet = (hue = 217, saturation = 89) => {
-  const css = `
+import { css } from 'lit'
+
+// Returns a lazy CSSResult instead of constructing a CSSStyleSheet directly:
+// `new CSSStyleSheet()` throws "Illegal constructor" on browsers without
+// constructable stylesheet support (e.g. Safari < 16.4).
+export const createThemeStyles = (hue = 217, saturation = 89) => css`
     :host {
       --theme-primary: light-dark(hsl(${hue}, ${saturation}%, 50%), hsl(${hue}, ${saturation}%, 60%));
       --theme-primary-light: light-dark(hsl(${hue}, ${saturation}%, 90%), hsl(${hue}, ${saturation}%, 30%));
@@ -44,8 +48,3 @@ export const createThemeStyleSheet = (hue = 217, saturation = 89) => {
       --theme-icon-size-lg: 18px;
     }
   `
-
-  const sheet = new CSSStyleSheet()
-  sheet.replaceSync(css)
-  return sheet
-}

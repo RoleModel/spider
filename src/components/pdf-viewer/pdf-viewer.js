@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html, adoptStyles } from 'lit'
 import { ContextProvider } from '@lit/context'
 import './url-parse-polyfill.js'
 import * as pdfjsLib from 'pdfjs-dist'
@@ -8,7 +8,7 @@ import openjpegWasmUrl from 'pdfjs-dist/wasm/openjpeg.wasm?url'
 import qcmsWasmUrl from 'pdfjs-dist/wasm/qcms_bg.wasm?url'
 import styles from './pdf-viewer.styles.js'
 import { pdfContext } from './pdf-context.js'
-import { createThemeStyleSheet } from './theme-config.js'
+import { createThemeStyles } from './theme-config.js'
 import { normalizeText } from './helpers/text-helper.js'
 import './toolbar/pdf-toolbar.js'
 import './sidebar/pdf-sidebar.js'
@@ -83,7 +83,7 @@ export default class PDFViewer extends RoleModelElement {
     this.searchOpen = false
     this.error = null
     this.loading = false
-    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
+    this.themeStyleSheet = createThemeStyles(this.themeHue, this.themeSaturation)
     this.fitToScreenScale = null
 
     this._provider = new ContextProvider(this, {
@@ -381,11 +381,8 @@ export default class PDFViewer extends RoleModelElement {
   }
 
   _updateThemeColors() {
-    this.themeStyleSheet = createThemeStyleSheet(this.themeHue, this.themeSaturation)
-    this.shadowRoot.adoptedStyleSheets = [
-      ...this.constructor.elementStyles.map(s => s.styleSheet),
-      this.themeStyleSheet
-    ]
+    this.themeStyleSheet = createThemeStyles(this.themeHue, this.themeSaturation)
+    adoptStyles(this.shadowRoot, [...this.constructor.elementStyles, this.themeStyleSheet])
   }
 
   async firstUpdated() {
