@@ -1,32 +1,30 @@
 import { describe, it, expect } from 'vitest'
-import { createThemeStyleSheet } from '../../src/components/pdf-viewer/theme-config.js'
+import { CSSResult } from 'lit'
+import { createThemeStyles } from '../../src/components/pdf-viewer/theme-config.js'
 
 describe('Theme Configuration', () => {
-  describe('createThemeStyleSheet', () => {
-    it('should create a CSSStyleSheet with default values', () => {
-      const sheet = createThemeStyleSheet()
+  describe('createThemeStyles', () => {
+    it('should create a CSSResult with default values', () => {
+      const styles = createThemeStyles()
 
-      expect(sheet).toBeInstanceOf(CSSStyleSheet)
-      expect(sheet.cssRules.length).toBeGreaterThan(0)
+      expect(styles).toBeInstanceOf(CSSResult)
+      expect(styles.cssText.length).toBeGreaterThan(0)
     })
 
-    it('should create a stylesheet with custom hue', () => {
-      const sheet = createThemeStyleSheet(150, 89)
+    it('should create styles with custom hue', () => {
+      const styles = createThemeStyles(150, 89)
 
-      expect(sheet).toBeInstanceOf(CSSStyleSheet)
-      expect(sheet.cssRules[0].cssText).toContain('150')
+      expect(styles.cssText).toContain('150')
     })
 
-    it('should create a stylesheet with custom saturation', () => {
-      const sheet = createThemeStyleSheet(217, 50)
+    it('should create styles with custom saturation', () => {
+      const styles = createThemeStyles(217, 50)
 
-      expect(sheet).toBeInstanceOf(CSSStyleSheet)
-      expect(sheet.cssRules[0].cssText).toContain('50%')
+      expect(styles.cssText).toContain('50%')
     })
 
     it('should include all theme CSS variables', () => {
-      const sheet = createThemeStyleSheet()
-      const cssText = sheet.cssRules[0].cssText
+      const cssText = createThemeStyles().cssText
 
       expect(cssText).toContain('--theme-primary')
       expect(cssText).toContain('--theme-neutral-')
@@ -37,10 +35,22 @@ describe('Theme Configuration', () => {
     })
 
     it('should use light-dark() function for color properties', () => {
-      const sheet = createThemeStyleSheet()
-      const cssText = sheet.cssRules[0].cssText
+      const cssText = createThemeStyles().cssText
 
       expect(cssText).toContain('light-dark')
+    })
+
+    it('should not construct a CSSStyleSheet eagerly (Safari < 16.4 has no constructor)', () => {
+      const originalCSSStyleSheet = globalThis.CSSStyleSheet
+      globalThis.CSSStyleSheet = function () {
+        throw new TypeError('Illegal constructor')
+      }
+
+      try {
+        expect(() => createThemeStyles(217, 89)).not.toThrow()
+      } finally {
+        globalThis.CSSStyleSheet = originalCSSStyleSheet
+      }
     })
   })
 })
