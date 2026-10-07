@@ -65,14 +65,16 @@ export default class PDFPage extends PDFViewerComponent {
 
     const scaledViewport = this.page.getViewport({ scale: this.scale * devicePixelRatio })
 
+    let renderTask
+
     try {
-      this._renderTask = this.page.render({
+      renderTask = this._renderTask = this.page.render({
         canvasContext,
         viewport: scaledViewport
       })
 
-      await this._renderTask.promise
-      this._renderTask = null
+      await renderTask.promise
+      if (this._renderTask === renderTask) this._renderTask = null
 
       const textLayerDiv = this.shadowRoot.querySelector('.text-layer')
       textLayerDiv.style.width = `${viewport.width}px`
@@ -91,7 +93,7 @@ export default class PDFPage extends PDFViewerComponent {
       if (error.name !== 'RenderingCancelledException') {
         console.error('Error rendering page:', error)
       }
-      this._renderTask = null
+      if (this._renderTask === renderTask) this._renderTask = null
     }
   }
 

@@ -76,6 +76,17 @@ describe('PDFViewer Component', () => {
       expect(element.pdfDoc).toBeDefined()
       expect(element.totalPages).toBe(5)
     })
+
+    it('should render only pages in the canvas container', async () => {
+      element = await createViewer({ src: '/test.pdf', open: true })
+      await waitForCondition(() => element.pdfDoc !== null)
+
+      const canvas = element.shadowRoot.querySelector('rm-pdf-canvas')
+      await waitForCondition(() => canvas?.shadowRoot?.querySelectorAll('rm-pdf-page').length === 5)
+
+      const container = canvas.shadowRoot.querySelector('.canvas-container')
+      expect(container.textContent.trim()).toBe('')
+    })
   })
 
   describe('Navigation', () => {
